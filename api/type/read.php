@@ -26,7 +26,7 @@
           );
           array_push($type["body"], $type_arr);
       }
-      echo json_encode($type);
+      echo json_encode($type,JSON_UNESCAPED_UNICODE);
   }  else {
       echo json_decode( array( "body" => array(), "count" => 0) );
   }

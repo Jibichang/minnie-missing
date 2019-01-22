@@ -16,6 +16,7 @@ $missing = new MissingPersons($db);
 $data = json_decode(file_get_contents("php://input"));
 
 if(
+    !empty($data->id) &&
     !empty($data->pname) &&
     !empty($data->fname) &&
     !empty($data->lname) &&
@@ -29,11 +30,11 @@ if(
     !empty($data->specific) &&
     !empty($data->status) &&
     !empty($data->type_id) &&
-    !empty($data->guest_id) &&
-    !empty($data->feedback_id)
+    !empty($data->guest_id)
 ){
 
     // set product property values
+    //$missing->id = $data->id;
     $missing->pname = $data->pname;
     $missing->fname = $data->fname;
     $missing->lname = $data->lname;
@@ -48,36 +49,25 @@ if(
     $missing->status = $data->status;
     $missing->type_id = $data->type_id;
     $missing->guest_id = $data->guest_id;
-    $missing->feedback_id = $data->feedback_id;
+    $missing->reg_date = $data->reg_date;
 
-    // create the product
     if($missing->create()){
 
-        // set response code - 201 created
-        http_response_code(201);
+      // set response code
+      http_response_code(200);
 
-        // tell the user
-        echo json_encode(array("message" => "Product was created."));
+      // display message: user was created
+      echo json_encode(array("message" => "User was created."));
     }
 
-    // if unable to create the product, tell the user
-    elseif{
+    // message if unable to create user
+    else{
 
-        // set response code - 503 service unavailable
-        http_response_code(503);
+      // set response code
+      http_response_code(400);
 
-        // tell the user
-        echo json_encode(array("message" => "Unable to create product."));
+      // display message: unable to create user
+      echo json_encode(array("message" => "Unable to create user."));
     }
-
-
-// tell the user data is incomplete
-else{
-
-    // set response code - 400 bad request
-    http_response_code(400);
-
-    // tell the user
-    echo json_encode(array("message" => "Unable to create product. Data is incomplete."));
 }
 ?>

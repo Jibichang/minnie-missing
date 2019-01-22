@@ -48,11 +48,12 @@ class Type{
 
     function update(){
 
-      $query = "INSERT INTO
-                " . $this->table_name . "
-            SET
-            type_id = :type_id,
-            type_name = :type_name";
+              $query = "UPDATE
+                            " . $this->table_name . "
+                        SET
+                        type_name = :type_name
+                        WHERE
+                            type_id = :id";
 
       $stmt = $this->connection->prepare($query);
 
@@ -67,7 +68,7 @@ class Type{
 
       if($stmt->execute()){
         return true;
-        echo "jjjj";
+
       }
       return false;
     }

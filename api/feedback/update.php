@@ -24,7 +24,8 @@ $data = json_decode(file_get_contents("php://input"));
 $feedback->feedback_id = $data->feedback_id;
 
 // set product property values
-$feedback->record = $data->record;
+$feedback->guest_id = $data->guest_id;
+$feedback->id = $data->id;
 
 // update the product
 if($feedback->update()){

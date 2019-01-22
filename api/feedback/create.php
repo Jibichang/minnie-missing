@@ -16,7 +16,9 @@ $feedback = new Feedback($db);
 $data = json_decode(file_get_contents("php://input"));
 
 //$feedback->feedback_id = $data->feedback_id;
-$feedback->record = $data->record;
+$feedback->guest_id = $data->guest_id;
+//จาก plost
+$feedback->id = $data->id;
 
 
 // create the product

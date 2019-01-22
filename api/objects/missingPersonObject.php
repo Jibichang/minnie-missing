@@ -76,8 +76,7 @@ class MissingPersons{
                 status = :status,
                 type_id = :type_id,
                 guest_id = :guest_id,
-                reg_date = NOW(),
-                feedback_id = :feedback_id";
+                reg_date = NOW()";
 
     // prepare query
     $stmt = $this->connection->prepare($query);
@@ -99,7 +98,7 @@ class MissingPersons{
     $this->type_id=htmlspecialchars(strip_tags($this->type_id));
     $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
     $this->reg_date=htmlspecialchars(strip_tags($this->reg_date));
-    $this->feedback_id=htmlspecialchars(strip_tags($this->feedback_id));
+
 
     // bind values
     $stmt->bindParam(":id", $this->id);
@@ -118,8 +117,13 @@ class MissingPersons{
     $stmt->bindParam(":type_id",$this->type_id);
     $stmt->bindParam(":guest_id",$this->guest_id);
     $stmt->bindParam(":reg_date",$this->reg_date);
-    $stmt->bindParam(":feedback_id", $this->feedback_id);
-  }
+
+    if($stmt->execute()){
+        return true;
+    }
+
+    return false;
+   }
 
   function emailExists(){
 
@@ -147,13 +151,11 @@ class MissingPersons{
   }
   return false;
 }
+
   function update(){
 
-      // update query
-      $query = "UPDATE
-                  " . $this->table_name . "
-              SET
-                  pname = :pname,
+                  $query = "UPDATE $this->table_name
+                  SET pname = :pname,
                   fname = :fname,
                   lname = :lname,
                   gender = :gender,
@@ -168,15 +170,15 @@ class MissingPersons{
                   type_id = :type_id,
                   guest_id = :guest_id,
                   reg_date = NOW(),
-                  feedback_id = feedback_id
-              WHERE
-                  id = :id";
+                  WHERE
+                id = :id";
+
 
       // prepare query statement
       $stmt = $this->connection->prepare($query);
 
       // sanitize
-    //  $this->id=htmlspecialchars(strip_tags($this->id));
+      $this->id=htmlspecialchars(strip_tags($this->id));
       $this->pname=htmlspecialchars(strip_tags($this->pname));
       $this->fname=htmlspecialchars(strip_tags($this->fname));
       $this->lname=htmlspecialchars(strip_tags($this->lname));
@@ -191,7 +193,7 @@ class MissingPersons{
       $this->status=htmlspecialchars(strip_tags($this->status));
       $this->type_id=htmlspecialchars(strip_tags($this->type_id));
       $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
-      $this->feedback_id=htmlspecialchars(strip_tags($this->feedback_id));
+      $this->reg_date=htmlspecialchars(strip_tags($this->reg_date));
 
       // bind new values
       $stmt->bindParam(':id', $this->id);
@@ -210,7 +212,6 @@ class MissingPersons{
       $stmt->bindParam(':type_id', intval($this->type_id));
       $stmt->bindParam(':guest_id', intval($this->guest_id));
       $stmt->bindParam(':reg_date', $this->reg_date);
-      $stmt->bindParam(':feedback_id', $this->feedback_id);
 
       // execute the query
       if($stmt->execute()){
@@ -220,5 +221,34 @@ class MissingPersons{
           return false;
       }
 
+      // search products
+function search($keywords){
+
+    // select all query
+
+
+    $query = "SELECT fname,lname,detail,reg_date FROM
+                 . $this->table_name
+            WHERE
+                fname LIKE ? OR lname LIKE ? OR detail LIKE ?
+            ORDER BY
+                reg_date DESC";
+
+    // prepare query statement
+    $stmt = $this->connection->prepare($query);
+
+    // sanitize
+    $keywords=htmlspecialchars(strip_tags($keywords));
+    $keywords = "%{$keywords}%";
+
+    // bind
+    $stmt->bindParam(1, $keywords);
+    $stmt->bindParam(2, $keywords);
+    $stmt->bindParam(3, $keywords);
+
+    $stmt->execute();
+
+    return $stmt;
+  }
 }
 ?>

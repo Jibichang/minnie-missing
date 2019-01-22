@@ -1,47 +1,30 @@
 <?php
-// required headers
-header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Origin: http://localhost/rest-api-authentication-example/");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// include database and object files
 include_once '../config/database.php';
-include_once '../objects/missingPersonObject.php';
+include_once '../objects/typeObject.php';
 
-// get database connection
 $database = new Database();
 $db = $database->getConnection();
 
-// prepare product object
-$missing = new MissingPersons ($db);
+$type = new Type ($db);
 
-// get id of product to be edited
 $data = json_decode(file_get_contents("php://input"));
 
 // set ID property of product to be edited
-$missing->id = $data->id;
+$type->type_id = $data->type_id;
 
 // set product property values
-$missing->pname = $data->pname;
-$missing->fname = $data->fname;
-$missing->lname = $data->lname;
-$missing->gender = $data->gender;
-$missing->age = $data->age;
-$missing->place = $data->place;
-$missing->subdistrict = $data->subdistrict;
-$missing->district = $data->district;
-$missing->city = $data->city;
-$missing->detail = $data->detail;
-$missing->specific = $data->specific;
-$missing->status = $data->status;
-$missing->type_id = $data->type_id;
-$missing->guest_id = $data->guest_id;
-$missing->reg_date = $data->reg_date;
+$type->type_name = $data->type_name;
+
+
 
 // update the product
-if($missing->update()){
+if($type->update()){
 
     // set response code - 200 ok
     http_response_code(200);

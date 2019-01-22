@@ -1,125 +1,235 @@
+-- phpMyAdmin SQL Dump
+-- version 4.8.2
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jan 21, 2019 at 06:32 PM
+-- Server version: 10.1.34-MariaDB
+-- PHP Version: 7.2.7
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `missing_person`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback`
+--
+
+CREATE TABLE `feedback` (
+  `feedback_id` int(11) NOT NULL,
+  `guest_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`feedback_id`, `guest_id`, `id`) VALUES
+(1, 2, 1),
+(2, 2, 1),
+(13, 2, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `guest`
+--
+
+CREATE TABLE `guest` (
+  `guest_id` int(6) UNSIGNED NOT NULL,
+  `guest_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `guest_pass` varchar(1024) NOT NULL,
+  `guest_email` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `guest_place` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `guest_phone` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `feedback_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `guest`
+--
+
+INSERT INTO `guest` (`guest_id`, `guest_name`, `guest_pass`, `guest_email`, `guest_place`, `guest_phone`, `feedback_id`) VALUES
+(2, 'Mike2', '123', 'mike2@code.com', NULL, NULL, 0),
+(3, 'Mike2', '$2y$10$62PwViXBkPgDi.nq2teiueGg8R965xa7D73AirvC3QYG3H.ogeA5K', 'mike2@code.com', NULL, NULL, 0),
+(4, 'warunee', '$2y$10$BBINhoeO3a/htKbVEzXwVODFIwT5UWpvO5RJC0Jvj6iRuJxHMhqbG', 'aomekkla@gmail.com', NULL, NULL, 0),
+(5, '', '$2y$10$p9ObwEZJMxhlqyzDNRUNf.slEARaLHNUmIOR3yViNFvY.OZUIR6SW', '', NULL, NULL, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invert`
+--
+
+CREATE TABLE `invert` (
+  `invert_id` int(6) UNSIGNED NOT NULL,
+  `term` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `idf` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `plost`
+--
+
 CREATE TABLE `plost` (
   `id` int(6) UNSIGNED NOT NULL,
-  `pname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ,
-  `fname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `lname` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `gender` varchar(2) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `age` int(6) UNSIGNED NOT NULL,
-  `place` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `pname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `fname` varchar(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `lname` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `gender` varchar(2) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `age` int(6) UNSIGNED DEFAULT NULL,
+  `place` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `subdistrict` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '-',
   `district` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '-',
   `city` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '-',
-  `detail` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `detail` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `specific` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT '-',
-  `status` int(1) UNSIGNED NOT NULL DEFAULT 0,
+  `status` int(1) UNSIGNED NOT NULL DEFAULT '0',
   `type_id` int(6) UNSIGNED NOT NULL,
-  `guest_id` int(6) UNSIGNED NOT NULL DEFAULT 0,
+  `guest_id` int(6) UNSIGNED NOT NULL DEFAULT '0',
   `reg_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-)
- ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `plost`
+--
 
+INSERT INTO `plost` (`id`, `pname`, `fname`, `lname`, `gender`, `age`, `place`, `subdistrict`, `district`, `city`, `detail`, `specific`, `status`, `type_id`, `guest_id`, `reg_date`) VALUES
+(1, 'ด.ช.', 'ธนโชติ', 'ดิษวงษ์', 'M', 12, 'บริเวณสำนักสงฆ์ปฏิบัติธรรมชายธงเจริญธรรม', 'เขาชายธง', 'ตากฟ้า', 'นครสวรรค์', 'สูง 136 ซม. น้ำหนักประมาณ 26 กก. ผมเกรียน วันที่หายสวมผ้าไตรจีวรสีส้ม', '-', 0, 6, 2, '2018-11-29 07:28:19'),
+(2, 'นาย', 'สมคิด', 'ทาบุญมา', 'M', 45, 'บริเวณหมู่บ้านหนองแปน', 'เชียงเพ็ง', 'กุดจับ', 'อุดรธานี ', 'รูปร่างผอม สูงประมาณ 165 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ-ขาว', '-', 0, 6, 2, '2018-11-29 07:25:14'),
+(3, 'นาย', 'วิวัฒน์', 'โภคามาศ', 'M', 62, 'บริเวณท่าเรือปากเกร็ด', 'ปากเกร็ด', 'ปากเกร็ด', 'นนทบุรี', 'รูปร่างท้วม สูงประมาณ 170 ซม. ผิวสีแทน ลักษณะผมสั้น สีผมขาว การแต่งกายสวมเสื้อคอปกสีน้ำเงิน สวมกางเกงขาสั้นสีน้ำตาลแถบขาว สวมรองเท้าแตะแบบสวมสีฟ้า', '-', 0, 8, 0, '2019-01-17 01:30:00'),
+(4, 'นาย', 'อภิวัฒน์', 'เชื้อทอง', 'M', 15, 'บริเวณหมู่บ้านราษฎร์พัฒนา', 'ลาดทิพรส', 'ตาคลี', 'นครสวรรค์', 'เด็กหาย รูปร่างผอม สูงประมาณ 160 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ การแต่งกายสวมเสื้อยืดสีดำ สวมกางเกงยีนส์ขายาวสีดำ', '-', 0, 4, 0, '2019-01-10 13:00:00'),
+(5, 'นาย', 'สุระศักดิ์', 'รักษาบุญ', 'M', 29, 'บริเวณซอยนาคนิวาส 21', 'ลาดพร้าว', 'ลาดพร้าว', 'กรุงเทพมหานคร', 'คนหาย รูปร่างผอม สูงประมาณ 160 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ การแต่งกายสวมเสื้อยืดสีขาว สวมกางเกงขายาวสีน้ำเงิน สวมรองเท้าผ้าใบสีเขียว-ขาว', '-', 0, 6, 0, '2019-01-21 16:37:05'),
+(6, 'นางสาว', 'จินตนา', 'แซ่เตีย', 'F', 61, 'บริเวณหมู่บ้านกรีนการ์เด้นท์โฮม 4 ', 'ลำลูกกา', 'ลำลูกกา', 'ปทุมธานี', 'รูปร่างผอม สูงประมาณ 160 ซม. ผิวสีขาว ลักษณะผมยาว สีผมดำ-ขาว การแต่งกายสวมเสื้อยืดสีน้ำตาล สวมกางเกงขายาวสีเขียวอ่อน', '-', 0, 7, 0, '2018-02-23 17:00:00'),
+(7, 'นาย', 'มณฑล', 'ไตยราช', 'M', 23, 'บริเวณหมู่บ้านเครือหวาย', 'โป่งน้ำร้อน', 'โป่งน้ำร้อน', 'จันทบุรี', 'รูปร่างท้วม สูงประมาณ 175 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ การแต่งกายสวมเสื้อคลุมแขนยาวสีดำ สวมกางเกงขาสั้นสีเทา', '-', 0, 6, 0, '2018-02-22 17:00:00'),
+(8, 'นาย', 'ศักดิ์ชัย ', 'นามบุตร', 'M', 30, 'บริเวณอำเภอเมืองสมุทรปราการ', '-', '-', 'สมุทรปราการ', 'รูปร่างผอม สูงประมาณ 160 ซม. ผิวสีดำ-แดง ลักษณะผมยาว สีผมดำ มีรอยสักที่หลังและแขนทั้ง 2 ข้าง การแต่งกายสวมเสื้อยืด สวมกางเกงยีนส์ขายาว มีกระเป๋าสะพายข้าง 1 ใบ', 'มีรอยสักที่หลังและแขนทั้ง 2 ข้าง', 0, 6, 0, '2018-10-18 19:00:00'),
+(9, 'นาย', 'วีรพล ', 'ประจิมนอก', 'M', 30, 'บริเวณหมู่บ้านเสรีอ่อนนุช', 'ประเวศ ', 'ประเวศ ', 'กรุงเทพมหานคร ', ' รูปร่างผอม สูงประมาณ 180 ซม. ผิวสีขาว ลักษณะผมสั้นรองทรง สีผมดำ การแต่งกายสวมเสื้อคลุมแขนยาวสีน้ำตาล-ดำ สวมกางเกงยีนส์ขายาวสีดำ สะพายกระเป๋าเป้สีส้ม', '-', 0, 6, 0, '2018-03-13 17:00:00'),
+(10, 'นาย', 'กิติพงษ์', 'อินทร์พิลา', 'M', 28, 'บริเวณถนนลาดกระบัง', '-', 'ลาดกระบัง', 'กรุงเทพมหานคร', 'สูงประมาณ 160 ซม. น้ำหนักประมาณ 80 กก. ผิวคล้ำ ลัษณะผมสั้น สีผมดำ มีรอยแผลเป็นบริเวณแขนข้างซ้าย การแต่งกาย สวมกางเกงยีนส์ขายาว ไม่สวมเสื้อ ไม่สวมรองเท้า', '-', 0, 6, 0, '2018-12-20 17:00:00'),
+(11, 'นาย', 'ธีระยุทธ', 'วารีศรี ', 'M', 56, 'บริเวณหมู่บ้านท่าเสด็จ', 'ท่าบ่อ', 'ท่าบ่อ', 'หนองคาย ', 'รูปร่างผอม สูงประมาณ 160 ซม. ผิวสีดำ-แดง ลักษณะผมสั้นรองทรง สีผมดำ-ขาว การแต่งกายสวมเสื้อแขนยาว สวมกางเกงยีนส์ขายาว', '-', 0, 6, 0, '2018-12-27 01:00:00'),
+(12, 'นางสาว', 'พรรณี ', 'แผ่นทอง', 'F', 27, 'บริเวณหมู่บ้านสกลพัฒนา', 'ตะเคียน', 'กาบเชิง', 'สุรินทร์', 'รูปร่างผอม สูงประมาณ 150 ซม. ผิวสีดำ-แดง ลักษณะผมยาว สีผมดำ การแต่งกายสวมเสื้อยืดสีชมพู สวมกางเกงขาสั้นสีดำ สะพายกระเป๋าเป้ลายสีแดง-ขาว-น้ำเงิน', '-', 0, 6, 0, '2018-11-23 14:00:00'),
+(13, 'นาย', 'ธงชัย', 'สกุลรักษ์', 'M', 44, 'บริเวณซอยอ่อนนุช 46', 'สวนหลวง', 'สวนหลวง', 'กรุงเทพมหานคร', 'รูปร่างท้วม สูงประมาณ 160 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ การแต่งกายสวมเสื้อแขนยาวสีขาว สวมกางเกงยีนส์ขายาวสีน้ำเงิน ไม่สวมรองเท้า', '-', 0, 6, 0, '2019-01-21 16:44:52'),
+(14, 'นาย', 'วิเชียร', 'คงดี', 'M', 50, 'บริเวณซอยวัดใหญ่', 'ในคลองบางปลากด', 'พระสมุทรเจดีย์', 'สมุทรปราการ', 'ปร่างท้วม สูงประมาณ 160 ซม. ผิวสีขาว-เหลือง ลักษณะผมสั้น สีผมน้ำตาลเข้ม การแต่งกายสวมเสื้อเชิ้ตสีฟ้าอ่อน สวมเสื้อคลุมสีน้ำเงิน สวมกางเกงขายาวสีดำ สวมรองเท้าบู๊ทสีดำ', '-', 0, 7, 0, '2018-10-22 22:30:00'),
+(15, 'นาง', 'กิ้มเซี้ยน', 'เกื้อสกุล', 'F', 85, 'หมู่7', 'วังก์พง', 'ปราณบุรี', 'ประจวบคีรีขันธ์', 'รูปร่างเล็ก สูงประมาณ 150 ซม. น้ำหนักประมาณ 45 กก. ผิวสี ดำ-แดง ลักษณะผมยาว-รัดผม สีผมขาว ', '-', 0, 8, 0, '2018-11-26 17:00:00'),
+(16, 'นาย', 'กรแมน', 'แสนสุริวงษ์', 'M', 55, 'บริเวณถนนพหลโยธิน', 'คลองหนึ่ง', 'คลองหลวง', 'ปทุมธานี', 'รูปร่างสันทัด สูงประมาณ 160 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ-ขาว การแต่งกายสวมเสื้อแขนสั้นสีฟ้า-ขาว สวมกางเกงขายาวสีน้ำตาล สวมรองเท้าหนังสีน้ำตาล', '-', 0, 6, 0, '2018-10-24 14:30:00'),
+(17, 'นาย', 'ฉลาด', 'ผลาวงค์', 'M', 39, 'บริเวณซอยกรุงเทพกรีฑา 20 แยก 9', 'สะพานสูง', 'สะพานสูง', 'กรุงเทพมหานคร', 'รูปร่างผอม สูงประมาณ 165 ซม. ผิวสีดำ-แดง ลักษณะผมสั้นรองทรง สีผมดำ การแต่งกายสวมเสื้อคอปกสีขาวคาดแดง สวมกางเกงขาสั้น สวมรองเท้าแตะ', '-', 0, 6, 0, '2018-11-07 03:00:00'),
+(18, 'นางสาว', 'สุวรรณา', 'มณีวรรณ', 'F', 35, 'บริเวณติวานนท์ ซอย 4', 'ตลาดขวัญ', 'เมืองนนทบุรี', 'นนทบุรี', 'รูปร่างท้วม สูงประมาณ 155 ซม. ผิวสีขาว ลักษณะผมสั้นประบ่า สีผมดำ', '-', 0, 6, 0, '2018-09-05 17:00:00'),
+(19, 'นาย', 'กีรติ', 'ภูซ้ายสี', 'M', 18, 'บริเวณหมู่บ้านหนองขาม', 'ดอนสมบูรณ์ ', 'ยางตลาด', 'กาฬสินธุ์', 'ปร่างผอม สูงประมาณ 150 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ การแต่งกายสวมเสื้อยืดสีเหลือง สวมกางเกงขาสั้นสีฟ้า สวมรองเท้าแตะสีขาว', '-', 0, 4, 0, '2018-10-29 08:00:00'),
+(20, 'นาย', 'ลิขิต', 'วงษ์การดี', 'M', 54, 'บริเวณหมู่บ้านหนองเรือ', 'หนองเรือ', 'หนองเรือ', 'ขอนแก่น', 'รูปร่างผอม สูงประมาณ 165 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ-ขาว การแต่งกายสวมเสื้อยืด สวมกางเกงขาสั้นสีดำ สวมรองเท้าแตะสีน้ำเงิน', '-', 0, 6, 0, '2018-09-15 17:00:00');
 
- CREATE TABLE `invert` (
-   `invert_id` int(6) UNSIGNED NOT NULL,
-   `term` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-   `idf` varchar(150) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+-- --------------------------------------------------------
 
- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Table structure for table `type`
+--
 
- INSERT INTO `plost` (`id`,`pname`, `fname`, `lname`,`gender`,`age`,`place`,`subdistrict`,`district`,`city`,`detail`,`specific`,`status`,`type_id`,`guest_id`,`reg_date`) VALUES
+CREATE TABLE `type` (
+  `type_id` int(6) UNSIGNED NOT NULL,
+  `type_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
- (1, 'ด.ช.', 'ธนโชติ', 'ดิษวงษ์', 'M', 12, 'บริเวณสำนักสงฆ์ปฏิบัติธรรมชายธงเจริญธรรม' ,'เขาชายธง','ตากฟ้า','นครสวรรค์', 'สูง 136 ซม. น้ำหนักประมาณ 26 กก. ผมเกรียน วันที่หายสวมผ้าไตรจีวรสีส้ม','-',0, 6,1,'2017-03-28 14:34:32'),
- (2, 'นาย', 'สมคิด', 'ทาบุญมา', 'M', 45, 'บริเวณหมู่บ้านหนองแปน','เชียงเพ็ง','กุดจับ','อุดรธานี ', 'รูปร่างผอม สูงประมาณ 165 ซม. ผิวสีดำ-แดง ลักษณะผมสั้น สีผมดำ-ขาว','-',0, 6 ,2,'2017-03-30 04:00:53'),
- (3, 'น.ส.', 'จินตนา', 'แซ่เตีย', 'F', 61, 'บริเวณหมู่บ้านกรีนการ์เด้นท์โฮม 4','ลำลูกกา','ลำลูกกา','ปทุมธานี','รูปร่างผอม สูงประมาณ 160 ซม. ผิวสีขาว ลักษณะผมยาว สีผมดำ-ขาว การแต่งกายสวมเสื้อยืดสีน้ำตาล สวมกางเกงขายาวสีเขียวอ่อน','-',0,7,3,'2017-03-28 14:34:32');
+--
+-- Dumping data for table `type`
+--
 
+INSERT INTO `type` (`type_id`, `type_name`) VALUES
+(1, 'ลักพาตัว'),
+(2, 'เด็กพลัดหลง'),
+(3, 'จิตเวท'),
+(4, 'พัฒนาการทางสมองช้า'),
+(5, 'แย้งความปกครองบุตร'),
+(6, 'สุขภาพจิต'),
+(7, 'อาการทางสมอง'),
+(8, 'อาการทางสมอง หลงลืม');
 
- CREATE TABLE `guest` (
-   `guest_id` int(6) UNSIGNED NOT NULL,
-   `guest_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-   `guest_pass` varchar(1024) NOT NULL,
-   `guest_email` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-   `guest_place` varchar(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
-   `guest_phone` varchar(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL
- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Indexes for dumped tables
+--
 
- INSERT INTO `guest` (`guest_id`, `guest_name`, `guest_pass`, `guest_email`, `guest_place`, `guest_phone`) VALUES
- (2, 'Mike2', '123', 'mike2@code.com', NULL, NULL),
- (3, 'Mike2', '$2y$10$62PwViXBkPgDi.nq2teiueGg8R965xa7D73AirvC3QYG3H.ogeA5K', 'mike2@code.com', NULL, NULL),
- (4, 'warunee', '$2y$10$BBINhoeO3a/htKbVEzXwVODFIwT5UWpvO5RJC0Jvj6iRuJxHMhqbG', 'aomekkla@gmail.com', NULL, NULL);
+--
+-- Indexes for table `feedback`
+--
+ALTER TABLE `feedback`
+  ADD PRIMARY KEY (`feedback_id`);
 
- CREATE TABLE `type` (
-   `type_id` int(6)  UNSIGNED NOT NULL,
-   `type_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+--
+-- Indexes for table `guest`
+--
+ALTER TABLE `guest`
+  ADD PRIMARY KEY (`guest_id`);
 
- ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Indexes for table `invert`
+--
+ALTER TABLE `invert`
+  ADD PRIMARY KEY (`invert_id`);
 
-   INSERT INTO `type` (`type_id`, `type_name`) VALUES
-   (1,'ลักพาตัว'),
-   (2,'เด็กพลัดหลง'),
-   (3,'จิตเวท'),
-   (4,'พัฒนาการทางสมองช้า'),
-   (5,'แย้งความปกครองบุตร'),
-   (6,'สุขภาพจิต'),
-   (7,'อาการทางสมอง');
+--
+-- Indexes for table `plost`
+--
+ALTER TABLE `plost`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `type_id` (`type_id`),
+  ADD KEY `guest_id` (`guest_id`);
 
-   CREATE TABLE `feedback` (
-     `feedback_id` int(6) UNSIGNED NOT NULL,
-     `record` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
-   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+--
+-- Indexes for table `type`
+--
+ALTER TABLE `type`
+  ADD PRIMARY KEY (`type_id`);
 
-   INSERT INTO `feedback` (`feedback_id`, `record`) VALUES
-   (1, 'สมชาย'),
-   (2, 'สมศรี');
-   --
-   -- Indexes for dumped tables
-   ALTER TABLE `feedback`
-     ADD PRIMARY KEY (`feedback_id`);
+--
+-- AUTO_INCREMENT for dumped tables
+--
 
-    ALTER TABLE `type`
-     ADD PRIMARY KEY (`type_id`);
+--
+-- AUTO_INCREMENT for table `feedback`
+--
+ALTER TABLE `feedback`
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
-    ALTER TABLE `invert`
-       ADD PRIMARY KEY (`invert_id`);
+--
+-- AUTO_INCREMENT for table `guest`
+--
+ALTER TABLE `guest`
+  MODIFY `guest_id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
-    ALTER TABLE `plost`
-         ADD PRIMARY KEY (`id`);
+--
+-- AUTO_INCREMENT for table `invert`
+--
+ALTER TABLE `invert`
+  MODIFY `invert_id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT;
 
-    ALTER TABLE `Guest`
-           ADD PRIMARY KEY (`guest_id`);
+--
+-- Constraints for dumped tables
+--
 
-   ALTER TABLE `Guest`
-             MODIFY `guest_id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-           COMMIT;
-           -- phpMyAdmin SQL Dump
-           -- version 4.8.2
-           -- https://www.phpmyadmin.net/
-           --
-           -- Host: 127.0.0.1
-           -- Generation Time: Jan 18, 2019 at 03:22 PM
-           -- Server version: 10.1.34-MariaDB
-           -- PHP Version: 7.0.31
+--
+-- Constraints for table `plost`
+--
+ALTER TABLE `plost`
+  ADD CONSTRAINT `plost_ibfk_1` FOREIGN KEY (`type_id`) REFERENCES `type` (`type_id`);
+COMMIT;
 
-           SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-           SET AUTOCOMMIT = 0;
-           START TRANSACTION;
-           SET time_zone = "+00:00";
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
-
-           /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-           /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-           /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-           /*!40101 SET NAMES utf8mb4 */;
-
-           --
-           -- Database: `missing_person`
-           --
-
-           -- --------------------------------------------------------
 
            --
            -- Table structure for table `thailand`

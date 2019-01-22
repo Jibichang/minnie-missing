@@ -22,12 +22,16 @@
 
           $feedback_arr = array(
             "feedback_id" => $feedback_id,
-            "record" => $record
+            "guest_id" => $guest_id,
+            "id" => $id
           );
           array_push($feedback["body"], $feedback_arr);
       }
       echo json_encode($feedback);
-  }  else {
+    }
+    else
+    {
       echo json_decode( array( "body" => array(), "count" => 0) );
   }
+
 ?>

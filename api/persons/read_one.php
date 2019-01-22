@@ -40,7 +40,7 @@
           );
           array_push($missing["body"], $missing_arr);
       }
-      echo json_encode($missing);
+      echo json_encode($missing,JSON_UNESCAPED_UNICODE);
   }  else {
       echo json_encode( array( "body" => array(), "count" => 0) );
   }
