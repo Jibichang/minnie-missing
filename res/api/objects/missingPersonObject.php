@@ -1,7 +1,7 @@
 <?php
 class MissingPersons{
   private $connection;
-  private $table_name = "peoplelost";
+  private $table_name = "personlost";
 
 
   public $plost_id;
@@ -31,22 +31,9 @@ class MissingPersons{
   public $status;
   public $reg_date;
 
-  private $count_doc = 0;
-  private $word_all = array();
-  private $count_word_all = 0;
-  private $word_per_doc = array();
-  private $count_word_per_doc = array();
-  private $cut_query = array();
-  private $doc = array();
-  private $word_unique = array();
-  private $idf_value = array();
-  private $idf =array();
-  private $freq_doc = array();
-
-  private $sim_result_return = array();
-
   public function __construct($connection){
     $this->connection = $connection;
+
   }
 
   function read(){
@@ -304,9 +291,13 @@ class MissingPersons{
 
       // search products
 function search(){
-  $query = "SELECT * FROM $this->table_name
-            WHERE IF(gender = :gender AND status = :status ,
-              IF(fname LIKE :fname OR lname LIKE :lname ,1,0) ,0)";
+  $query = "SELECT * FROM
+               . $this->table_name
+          WHERE
+      fname LIKE :fname OR lname LIKE :lname OR gender LIKE :gender OR city LIKE :city OR height LIKE :height OR shape LIKE :shape
+      OR hairtype LIKE :hairtype OR haircolor LIKE :haircolor OR skintone LIKE :skintone OR type_id LIKE :type_id OR status LIKE :status
+  ORDER BY
+      fname DESC";
       // prepare query statement
       $stmt = $this->connection->prepare($query);
   // sanitize
@@ -325,202 +316,58 @@ function search(){
   //$this->missing_person=htmlspecialchars(strip_tags($this->missing_person));
   $this->fname = "%{$this->fname}%";
   $this->lname = "%{$this->lname}%";
-  // $this->gender = "%{$this->gender}%";
-  // $this->city = "%{$this->city}%";
-  // $this->height = "%{$this->height}%";
-  // $this->shape = "%{$this->shape}%";
-  // $this->hairtype = "%{$this->hairtype}%";
-  // $this->haircolor = "%{$this->haircolor}%";
-  // $this->skintone = "%{$this->skintone}%";
-  // $this->type_id = "%{$this->type_id}%";
-  // $this->status= "%{$this->status}%";
+  $this->gender = "%{$this->gender}%";
+  $this->city = "%{$this->city}%";
+  $this->height = "%{$this->height}%";
+  $this->shape = "%{$this->shape}%";
+  $this->hairtype = "%{$this->hairtype}%";
+  $this->haircolor = "%{$this->haircolor}%";
+  $this->skintone = "%{$this->skintone}%";
+  $this->type_id = "%{$this->type_id}%";
+  $this->status= "%{$this->status}%";
   //$this->lname = "%{$this->type}%";
   //$this->missing_person = "%{$this->missing_person}%";
   // bind
   $stmt->bindParam(":fname", $this->fname);
   $stmt->bindParam(":lname", $this->lname);
   $stmt->bindParam(":gender", $this->gender);
-  // $stmt->bindParam(":city", $this->city);
-  // $stmt->bindParam(":height", $this->height);
-  // $stmt->bindParam(":shape", $this->shape);
-  // $stmt->bindParam(":hairtype", $this->hairtype);
-  // $stmt->bindParam(":haircolor", $this->haircolor);
-  // $stmt->bindParam(":skintone", $this->skintone);
-  // $stmt->bindParam(":type_id", $this->type_id);
+  $stmt->bindParam(":city", $this->city);
+  $stmt->bindParam(":height", $this->height);
+  $stmt->bindParam(":shape", $this->shape);
+  $stmt->bindParam(":hairtype", $this->hairtype);
+  $stmt->bindParam(":haircolor", $this->haircolor);
+  $stmt->bindParam(":skintone", $this->skintone);
+  $stmt->bindParam(":type_id", $this->type_id);
   $stmt->bindParam(":status", $this->status);
-
   //$stmt->bindParam(":type", $this->type);
   //$stmt->bindParam(":missing_person", $this->missing_person);
   //$stmt->bindParam(1, $keywords);
   //$stmt->bindParam(2, $keywords);
   //$stmt->bindParam(3, $keywords);
   $stmt->execute();
-
-
-
   return $stmt;
   }
-  public function searchIR($document, $query){
-    $this->preProcess($document);
-    $this->calIDF();
-    $this->calQuery($query);
-    // $this->calIR();
-    return $this->calIR();
-  }
-function preProcess($stmt){
-    $segment = new Segment();
-
-    // $query = "SELECT * FROM " . $this->table_name;
-    // $stmt2 = $this->connection->prepare($query);
-    // $stmt2-> execute();
-
-    $this->count_doc = 0;
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-    {
-      $this->count_doc += 1; // N doc
-      $str = $row["detail_etc"]." ".$row["city"];
-      array_push($this->doc, $str); // detail (doc)
-      $this->word_all = $segment-> get_segment_array($row["detail_etc"]); //word
-    }
-    $this->word_unique = array_keys(array_count_values($this->word_all)); // word unique
-    // stop word
-    $diff = array_diff($this->word_unique,["กก.","ซม.", "น้ำหนัก", "ประมาณ", "บริเวณ","ลักษณะ"]);
-    $this->word_unique = array_values($diff);
-    $this->count_word_all = count($this->word_unique); // count word unique
-
-    return $this->doc;
-
-  }
-
-
-      function calIDF(){
-        $segment = new Segment();
-
-        $result = array();$result_freq = array();
-        $freq = array();
-        foreach ($this->doc as $doc_key => $doc_value) { // N doc
-          $word_doc = array(); $freq_temp = array();
-          $cut_doc = array();
-          $word_doc = $segment-> get_segment_array($this->doc[$doc_key]); //cut term per doc
-          $diff = array_diff($word_doc,["กก.","ซม.", "น้ำหนัก", "ประมาณ", "บริเวณ","ลักษณะ"]);
-
-          $sm = new Segment();
-          $cut_doc = $sm-> get_segment_array($this->doc[$doc_key]); //cut term per doc
-          $cut_doc = array_diff($cut_doc,["กก.","ซม.", "น้ำหนัก", "ประมาณ", "บริเวณ","ลักษณะ"]);
-
-          // have term in doc?
-          $temp = array_intersect($word_doc, $this->word_unique);
-          $freq_temp = array_intersect($cut_doc, $this->word_unique);
-          $this->freq_doc[$doc_key] = array_count_values(
-            array_intersect($cut_doc, $this->word_unique));
-            // query and cut doc
-            // $this->freq_doc[$doc_key] = array_intersect($cut_doc, array_keys($this->cut_query));
-            $count_n;
-            $freq[$doc_key] = array_unique($freq_temp);
-            $result_freq[$doc_key] = array_count_values($freq[$doc_key]);
-            foreach ($result_freq[$doc_key] as $key => $value) {
-              $count_n[$key] += count($value); // valid value tf [true]
-            }
-            // $freq[$doc_key] = array_count_values($cut_doc);
-            // $temp_freq = array_intersect($freq[$doc_key], $this->word_unique);
-            // $this->freq_doc[$doc_key] = $cut_doc;
-            // number of term in doc // term => frequency
-            $result = array_count_values($temp);
-            $this->idf_value = array_values($count_n);
-            foreach ($this->idf_value as $key => $value) { // calculate idf
-              $this->idf_value[$key] = round((log10(($this->count_doc)/($this->idf_value[$key]))),4);
-            }
-            // same value term unique before compare $countx = count($result);
-          }
-          return $this->doc;
-        }
-
-        function calQuery($input_detail){
-          $segment = new Segment();
-          $cutInput = array();
-
-          $data = $input_detail." ".$this->city;
-          $cutInput = $segment -> get_segment_array($data);
-          $diff = array_diff($cutInput,["กก.","ซม.", "น้ำหนัก", "ประมาณ", "บริเวณ","ลักษณะ"]);
-          $this->cut_query = array_count_values($diff);
-          // $this->cut_query = array_values($diff);
-          // return $this->cut_query;
-        }
-
-        function calIR(){
-          $segment = new Segment();
-          $query = "SELECT * FROM invert";
-          $stmt = $this->connection->prepare($query);
-          $stmt-> execute();
-
-          $lengh = array();
-
-          for ($i=0; $i < $this->count_word_all; $i++) {
-            $term = $this->word_unique[$i];
-            $idf = $this->idf_value[$i];
-            $this->idf[$term] = $idf;
-          }
-          $sim = array();
-          $weight = 0;
-          foreach ($this->freq_doc as $freq_key => $freq_value) {
-            $sum = 0;
-            foreach ($freq_value as $key => $value) {
-              // weight = idf * tf
-              $weight = $this->idf[$key]*$value;
-              $sum += $weight; // length
-            }
-            $lengh[$freq_key] = $sum;
-            $sim_value = 0;
-            foreach ($freq_value as $key => $value) {
-              // if ($key == $freq_value[$key]) { ///mark error if wrong value pls hide this line
-              if ($this->cut_query[$key] > 0) {
-                // weight
-                $weight = $this->idf[$key]*$value;
-                // sim = frequency query* ( weight / lenght)
-                $sim_value += $this->cut_query[$key]*($weight/$lengh[$freq_key]);
-              }
-              // } ///and this line
-            }
-            $sim[$freq_key] = $sim_value;
-          }
-          arsort($sim); // sort doc
-          $sim_result = array();
-
-          $missing_arr=array();
-          $missing_arr["body"]=array();
-          foreach ($sim as $key => $value) {
-            $key_plus = $key + 1;
-            $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
-            $stmt = $this->connection->prepare($query);
-            $stmt-> execute();
-
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-            {
-              extract($row);
-              $missing_item = array(
-                "fname"=> $fname,
-                "lname"=> $lname,
-                "gender"=>$gender,
-                "city"=> $city,
-                "height"=> $height,
-                "shape"=> $shape,
-                "hairtype"=>$hairtype,
-                "haircolor"=> $haircolor,
-                "skintone"=> $skintone,
-                "detail_etc"=> $detail_etc,
-                "type_id"=>$type_id,
-                "status"=> $status,
-                "reg_date"=> $reg_date
-              );
-              array_push($missing_arr["body"], $missing_item);
-              // array_push($sim_result, $row["detail_etc"]); // detail (doc)
-            }
-
-          }
-          return json_encode($missing_arr,JSON_UNESCAPED_UNICODE);
-          // return $sim_result;
-        }
 
 }
+  function read_one($keywords){
 
+      $query = "SELECT * FROM
+                   . $this->table_name
+              WHERE
+                  plost_id =$keywords
+                  ORDER BY plost_id DESC";
+
+      // prepare query statement
+      $stmt = $this->connection->prepare($query);
+
+      $stmt->execute();
+
+      return $stmt;
+}
+
+      function search_one(){
+
+
+
+    }
 ?>
