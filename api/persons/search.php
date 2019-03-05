@@ -34,7 +34,8 @@ $missing->detail_etc = $data->detail_etc;
 //$missing->missing_person = $data->fname.''.$data->lname;
 
 $stmt = $missing->search();
-$result = $missing->searchIR($missing->search(), $missing->detail_etc);
+$q = $missing->city." ".$missing->detail_etc." ".$missing->skintone." ".$missing->hairtype;
+$result = $missing->searchIR($missing->search(), $q);
 $num = $stmt->rowCount();
 
 // $search_arr = array(
