@@ -355,9 +355,6 @@ class MissingPersons{
       //$stmt->bindParam(2, $keywords);
       //$stmt->bindParam(3, $keywords);
       $stmt->execute();
-
-
-
       return $stmt;
     }
     public function searchIR($document, $query){
@@ -378,7 +375,12 @@ class MissingPersons{
       while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
       {
         $this->count_doc += 1; // N doc
-        $str = $row["detail_etc"]." ".$row["city"]." ".$row["skintone"]." ".$row["hairtype"];
+        $str =  $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
+                $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
+                $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
+                $row["hairtype"]." H".$row["haircolor"]." ".
+                $row["upperwaist"]." U".$row["uppercolor"]." ".
+                $row["lowerwaist"]." L".$row["lowercolor"];
         array_push($this->doc, $str); // detail (doc)
         $this->word_all = $segment-> get_segment_array($str); //word
       }
@@ -512,17 +514,29 @@ class MissingPersons{
           {
             extract($row);
             $missing_item = array(
+              "pname"=> $pname,
               "fname"=> $fname,
               "lname"=> $lname,
-              "gender"=>$gender,
+              "gender"=> $gender,
+              "age"=> $age,
+              "place"=> $place,
+              "subdistrict"=> $subdistrict,
+              "district"=> $district,
               "city"=> $city,
               "height"=> $height,
+              "weight"=> $weight,
               "shape"=> $shape,
-              "hairtype"=>$hairtype,
+              "hairtype"=> $hairtype,
               "haircolor"=> $haircolor,
               "skintone"=> $skintone,
+              "upperrwaist"=> $upperwaist,
+              "uppercolor"=> $uppercolor,
+              "lowerwaist"=> $lowerwaist,
+              "lowercolor"=> $lowercolor,
               "detail_etc"=> $detail_etc,
-              "type_id"=>$type_id,
+              "special"=> $special,
+              "type_id"=> $type_id,
+              "guest_id"=> $guest_id,
               "status"=> $status,
               "reg_date"=> $reg_date
             );
@@ -531,7 +545,7 @@ class MissingPersons{
           }
 
         }
-        return json_encode($missing_arr,JSON_UNESCAPED_UNICODE);
+        return $missing_arr;
         // return $sim_result;
       }
 

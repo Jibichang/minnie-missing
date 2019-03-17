@@ -49,3 +49,6 @@
               "type_id": "6",
               "status": "0"
           }
+
+          SELECT DISTINCT `district` FROM `thailand` WHERE `province` = 'กรุงเทพมหานคร'
+          SELECT DISTINCT `subdistrict` FROM `thailand` WHERE `district` = 'พระนคร'
