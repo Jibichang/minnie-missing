@@ -43,6 +43,7 @@ class MissingPersons{
   private $idf =array();
   private $freq_doc = array();
 
+  private $n_db =array();
   private $sim_result_return = array();
 
   public function __construct($connection){
@@ -306,7 +307,7 @@ class MissingPersons{
   function search(){
     $query = "SELECT * FROM $this->table_name
     WHERE IF(gender = :gender AND status = :status ,
-      IF(fname LIKE :fname OR lname LIKE :lname ,1,0) ,0)";
+      IF(fname LIKE :fname OR lname LIKE :lname ,1,1) ,0)";
       // prepare query statement
       $stmt = $this->connection->prepare($query);
       // sanitize
@@ -357,13 +358,15 @@ class MissingPersons{
       $stmt->execute();
       return $stmt;
     }
-    public function searchIR($document, $query){
-      $this->preProcess($document);
+
+    public function searchIR($query){
+      $this->preProcess($this->search());
       $this->calIDF();
       $this->calQuery($query);
       // $this->calIR();
       return $this->calIR();
     }
+
     function preProcess($stmt){
       $segment = new Segment();
 
@@ -381,6 +384,7 @@ class MissingPersons{
                 $row["hairtype"]." H".$row["haircolor"]." ".
                 $row["upperwaist"]." U".$row["uppercolor"]." ".
                 $row["lowerwaist"]." L".$row["lowercolor"];
+        array_push($this->n_db, $row["plost_id"]);
         array_push($this->doc, $str); // detail (doc)
         $this->word_all = $segment-> get_segment_array($str); //word
       }
@@ -497,7 +501,8 @@ class MissingPersons{
             // }
             // } ///and this line
           }
-          $sim[$freq_key] = $sim_value;
+          $x = $this->n_db[$freq_key];
+          $sim[$x] = $sim_value;
         }
         arsort($sim); // sort doc
         $sim_result = array();
@@ -505,7 +510,7 @@ class MissingPersons{
         $missing_arr=array();
         $missing_arr["body"]=array();
         foreach ($sim as $key => $value) {
-          $key_plus = $key + 1;
+          $key_plus = $key;
           $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
           $stmt = $this->connection->prepare($query);
           $stmt-> execute();
@@ -529,7 +534,7 @@ class MissingPersons{
               "hairtype"=> $hairtype,
               "haircolor"=> $haircolor,
               "skintone"=> $skintone,
-              "upperrwaist"=> $upperwaist,
+              "upperwaist"=> $upperwaist,
               "uppercolor"=> $uppercolor,
               "lowerwaist"=> $lowerwaist,
               "lowercolor"=> $lowercolor,

@@ -14,7 +14,6 @@ $database = new Database();
 $db = $database->getConnection();
 // initialize object
 $missing = new MissingPersons($db);
-$search = new MissingPersonsIR($db);
 $data = json_decode(file_get_contents("php://input"));
 // get keywords
 //$keywords=isset($_POST["s"]) ? $_POST["s"] : "";
@@ -72,7 +71,7 @@ $q =  $missing->city." ".$missing->city." ".
       $missing->hairtype." ".
       $missing->haircolor." ".
       $missing->shape;
-$result = $missing->searchIR($missing->search(), $q);
+$result = $missing->searchIR($q);
 $num = $stmt->rowCount();
 
 if ($num >  0) {
@@ -80,6 +79,44 @@ if ($num >  0) {
   http_response_code(200);
   // show products data
   echo json_encode($result);
+
+  // $missing_arr=array();
+  // $missing_arr["body"]=array();
+  // while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+  // {
+  //   extract($row);
+  //   $missing_item = array(
+  //     "pname"=> $pname,
+  //     "fname"=> $fname,
+  //     "lname"=> $lname,
+  //     "gender"=> $gender,
+  //     "age"=> $age,
+  //     "place"=> $place,
+  //     "subdistrict"=> $subdistrict,
+  //     "district"=> $district,
+  //     "city"=> $city,
+  //     "height"=> $height,
+  //     "weight"=> $weight,
+  //     "shape"=> $shape,
+  //     "hairtype"=> $hairtype,
+  //     "haircolor"=> $haircolor,
+  //     "skintone"=> $skintone,
+  //     "upperrwaist"=> $upperwaist,
+  //     "uppercolor"=> $uppercolor,
+  //     "lowerwaist"=> $lowerwaist,
+  //     "lowercolor"=> $lowercolor,
+  //     "detail_etc"=> $detail_etc,
+  //     "special"=> $special,
+  //     "type_id"=> $type_id,
+  //     "guest_id"=> $guest_id,
+  //     "status"=> $status,
+  //     "reg_date"=> $reg_date
+  //   );
+  //   array_push($missing_arr["body"], $missing_item);
+  //   // array_push($sim_result, $row["detail_etc"]); // detail (doc)
+  // }
+  // echo json_encode($missing_arr);
+
 }
 else {
   // set response code - 404 Not found
