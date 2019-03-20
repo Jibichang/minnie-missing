@@ -378,7 +378,8 @@ class MissingPersons{
       while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
       {
         $this->count_doc += 1; // N doc
-        $str =  $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
+        $str =  $row["fname"]." ".$row["lname"]." ".
+                $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
                 $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
                 $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
                 $row["hairtype"]." H".$row["haircolor"]." ".
@@ -519,6 +520,7 @@ class MissingPersons{
           {
             extract($row);
             $missing_item = array(
+              "id"=> $plost_id,
               "pname"=> $pname,
               "fname"=> $fname,
               "lname"=> $lname,

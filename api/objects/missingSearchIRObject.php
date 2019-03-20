@@ -2,6 +2,33 @@
 include('../libs/THSplitLib/THSplitLib/segment.php');
 // include(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'api/libs/THSplitLib/THSplitLib/segment.php');
 class MissingPersonsIR{
+  public $plost_id;
+  public $pname;
+  public $fname;
+  public $lname;
+  public $gender;
+  public $age;
+  public $place;
+  public $subdistrict;
+  public $district;
+  public $city;
+  public $height;
+  public $weight;
+  public $shape;
+  public $hairtype;
+  public $haircolor;
+  public $skintone;
+  public $upperwaist;
+  public $uppercolor;
+  public $lowerwaist;
+  public $lowercolor;
+  public $detail_etc;
+  public $special;
+  public $type_id;
+  public $guest_id;
+  public $status;
+  public $reg_date;
+
   private $connection;
   private $table_name = "peoplelost";
   private $count_doc = 0;
@@ -16,6 +43,7 @@ class MissingPersonsIR{
   private $idf =array();
 
   private $freq_doc = array();
+  private $n_db =array();
 
   public function __construct($connection){
     $this->connection = $connection;
@@ -30,7 +58,9 @@ class MissingPersonsIR{
   }
 
   function read(){
-    $query = "SELECT * FROM " . $this->table_name;
+    $query = "SELECT * FROM $this->table_name
+    WHERE IF(gender = 'M' AND status = '0' ,
+      IF(fname LIKE '' OR lname LIKE '' ,1,1) ,0)";
     $stmt = $this->connection->prepare($query);
     $stmt-> execute();
     // $count_doc = $stmt->rowCount();
@@ -56,8 +86,16 @@ class MissingPersonsIR{
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
     {
       $this->count_doc += 1; // N doc
-      array_push($this->doc, $row["detail_etc"]); // detail (doc)
-      $this->word_all = $segment-> get_segment_array($row["detail_etc"]); //word
+      $str =  $row["fname"]." ".$row["lname"]." ".
+              $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
+              $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
+              $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
+              $row["hairtype"]." H".$row["haircolor"]." ".
+              $row["upperwaist"]." U".$row["uppercolor"]." ".
+              $row["lowerwaist"]." L".$row["lowercolor"];
+      array_push($this->n_db, $row["plost_id"]);
+      array_push($this->doc, $str); // detail (doc)
+      $this->word_all = $segment-> get_segment_array($str); //word
     }
     $this->word_unique = array_keys(array_count_values($this->word_all)); // word unique
     // stop word
@@ -69,29 +107,30 @@ class MissingPersonsIR{
 
   }
 
-  function clearIDF(){
-    ///delete data in table idf
-    $queryDel = "DELETE FROM invert";
-    $stmtDel = $this->connection->prepare($queryDel);
-    if($stmtDel->execute()){}
+  // function clearIDF(){
+  //   ///delete data in table idf
+  //   $queryDel = "DELETE FROM invert";
+  //   $stmtDel = $this->connection->prepare($queryDel);
+  //   if($stmtDel->execute()){}
+  //
+  //     //INSERT to phpmyadmin///
+  //     for ($i=0; $i < $this->count_word_all; $i++) {
+  //       $term = $this->word_unique[$i];
+  //       $idf = $this->idf_value[$i];
+  //       $queryTerm = "INSERT INTO `invert`(`term`,`idf`) VALUES ('$term','$idf')";
+  //       $stmtTerm = $this->connection->prepare($queryTerm);
+  //       $stmtTerm->bindParam(":term", $term);
+  //       $stmtTerm->bindParam(":term", $idf);
+  //       if($stmtTerm->execute()){}
+  //       }
+  //     }
 
-      //INSERT to phpmyadmin///
-      for ($i=0; $i < $this->count_word_all; $i++) {
-        $term = $this->word_unique[$i];
-        $idf = $this->idf_value[$i];
-        $queryTerm = "INSERT INTO `invert`(`term`,`idf`) VALUES ('$term','$idf')";
-        $stmtTerm = $this->connection->prepare($queryTerm);
-        $stmtTerm->bindParam(":term", $term);
-        $stmtTerm->bindParam(":term", $idf);
-        if($stmtTerm->execute()){}
-        }
-      }
 
       function calIDF(){
         $segment = new Segment();
 
         $result = array();$result_freq = array();
-        $freq = array();
+        $freq = array(); $count_n = array();
         foreach ($this->doc as $doc_key => $doc_value) { // N doc
           $word_doc = array(); $freq_temp = array();
           $cut_doc = array();
@@ -109,11 +148,15 @@ class MissingPersonsIR{
             array_intersect($cut_doc, $this->word_unique));
             // query and cut doc
             // $this->freq_doc[$doc_key] = array_intersect($cut_doc, array_keys($this->cut_query));
-            $count_n;
+
             $freq[$doc_key] = array_unique($freq_temp);
             $result_freq[$doc_key] = array_count_values($freq[$doc_key]);
-            foreach ($result_freq[$doc_key] as $key => $value) {
-              $count_n[$key] += count($value); // valid value tf [true]
+            // error_reporting(error_reporting() & ~E_NOTICE);
+            foreach ($result_freq[$doc_key] as $key_x => $value_x) {
+              if (empty($count_n[$key_x])) {
+                $count_n[$key_x] = 0;
+              }
+              $count_n[$key_x] += $value_x; // valid value tf [true]
             }
             // $freq[$doc_key] = array_count_values($cut_doc);
             // $temp_freq = array_intersect($freq[$doc_key], $this->word_unique);
@@ -141,7 +184,7 @@ class MissingPersonsIR{
           //   $stmtTerm->bindParam(":term", $idf);
           //   if($stmtTerm->execute()){}
           // }
-          return $this->doc;
+          return array_keys($count_n);
         }
 
         function calQuery($input_detail){
@@ -153,14 +196,14 @@ class MissingPersonsIR{
           $diff = array_diff($cutInput,["กก.","ซม.", "น้ำหนัก", "ประมาณ", "บริเวณ","ลักษณะ"]);
           $this->cut_query = array_count_values($diff);
           // $this->cut_query = array_values($diff);
-          // return $this->cut_query;
+          return $this->cut_query;
         }
 
         function calIR(){
           $segment = new Segment();
-          $query = "SELECT * FROM invert";
-          $stmt = $this->connection->prepare($query);
-          $stmt-> execute();
+          // $query = "SELECT * FROM invert";
+          // $stmt = $this->connection->prepare($query);
+          // $stmt-> execute();
 
           $lengh = array();
 
@@ -182,23 +225,30 @@ class MissingPersonsIR{
             $sim_value = 0;
             foreach ($freq_value as $key => $value) {
               // if ($key == $freq_value[$key]) { ///mark error if wrong value pls hide this line
-              if ($this->cut_query[$key] > 0) {
-                // weight
-                $weight = $this->idf[$key]*$value;
-                // sim = frequency query* ( weight / lenght)
-                $sim_value += $this->cut_query[$key]*($weight/$lengh[$freq_key]);
+              if(!empty($this->cut_query[$key])){
+                if ($this->cut_query[$key] > 0) {
+                  // weight
+                  $weight = $this->idf[$key]*$value;
+                  // sim = frequency query* ( weight / lenght)
+                  $sim_value += $this->cut_query[$key]*($weight/$lengh[$freq_key]);
+                }
+              } else {
+                $this->cut_query[$key] = 0;
               }
+
               // } ///and this line
             }
-            $sim[$freq_key] = $sim_value;
+            $x = $this->n_db[$freq_key];
+            $sim[$x] = $sim_value;
           }
           arsort($sim); // sort doc
           $sim_result = array();
 
+          // return $sim;
           $missing_arr=array();
           $missing_arr["records"]=array();
           foreach ($sim as $key => $value) {
-            $key_plus = $key + 1;
+            $key_plus = $key;
             $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
             $stmt = $this->connection->prepare($query);
             $stmt-> execute();
@@ -207,19 +257,32 @@ class MissingPersonsIR{
             {
               extract($row);
               $missing_item = array(
-                "fname"=> $fname,
-                "lname"=> $lname,
-                "gender"=>$gender,
-                "city"=> $city,
-                "height"=> $height,
-                "shape"=> $shape,
-                "hairtype"=>$hairtype,
-                "haircolor"=> $haircolor,
-                "skintone"=> $skintone,
-                "detail_etc"=> $detail_etc,
-                "type_id"=>$type_id,
-                "status"=> $status,
-                "reg_date"=> $reg_date
+                "id"=> $plost_id,
+                    "pname"=> $pname,
+                    "fname"=> $fname,
+                    "lname"=> $lname,
+                    "gender"=> $gender,
+                    "age"=> $age,
+                    "place"=> $place,
+                    "subdistrict"=> $subdistrict,
+                    "district"=> $district,
+                    "city"=> $city,
+                    "height"=> $height,
+                    "weight"=> $weight,
+                    "shape"=> $shape,
+                    "hairtype"=> $hairtype,
+                    "haircolor"=> $haircolor,
+                    "skintone"=> $skintone,
+                    "upperwaist"=> $upperwaist,
+                    "uppercolor"=> $uppercolor,
+                    "lowerwaist"=> $lowerwaist,
+                    "lowercolor"=> $lowercolor,
+                    "detail_etc"=> $detail_etc,
+                    "special"=> $special,
+                    "type_id"=> $type_id,
+                    "guest_id"=> $guest_id,
+                    "status"=> $status,
+                    "reg_date"=> $reg_date
               );
               array_push($missing_arr["records"], $missing_item);
               // array_push($sim_result, $row["detail_etc"]); // detail (doc)
@@ -227,74 +290,27 @@ class MissingPersonsIR{
 
           }
           return json_encode($missing_arr,JSON_UNESCAPED_UNICODE);
-          // return $sim_result;
+          return $sim_result;
         }
 
-        function create(){
+        function search(){
+          $query = "SELECT * FROM $this->table_name
+          WHERE IF(gender = :gender AND status = :status ,
+            IF(fname LIKE :fname OR lname LIKE :lname ,1,1) ,0)";
+            // prepare query statement
+            $stmt = $this->connection->prepare($query);
 
-          // query to insert record
-          $query = "INSERT INTO
-          " . $this->table_name . "
-          SET
-          id = :id,
-          pname = :pname,
-          fname = :fname,
-          lname = :lname,
-          gender = :gender,
-          age = :age,
-          place = :place,
-          subdistrict = :subdistrict,
-          district = :district,
-          city = :city,
-          detail = :detail,
-          specific = :specific,
-          status = :status,
-          type_id = :type_id,
-          guest_id = :guest_id,
-          reg_date = NOW(),
-          feedback_id = :feedback_id";
+            $this->fname = "%{$this->fname}%";
+            $this->lname = "%{$this->lname}%";
+            // bind
+            $stmt->bindParam(":fname", $this->fname);
+            $stmt->bindParam(":lname", $this->lname);
+            $stmt->bindParam(":gender", $this->gender);
+            $stmt->bindParam(":status", $this->status);
+            $stmt->execute();
 
-          // prepare query
-          $stmt = $this->connection->prepare($query);
+            return $stmt;
+          }
 
-          // sanitize
-          $this->id=htmlspecialchars(strip_tags($this->id));
-          $this->pname=htmlspecialchars(strip_tags($this->pname));
-          $this->fname=htmlspecialchars(strip_tags($this->fname));
-          $this->lname=htmlspecialchars(strip_tags($this->lname));
-          $this->gender=htmlspecialchars(strip_tags($this->gender));
-          $this->age=htmlspecialchars(strip_tags($this->age));
-          $this->place=htmlspecialchars(strip_tags($this->place));
-          $this->subdistrict=htmlspecialchars(strip_tags($this->subdistrict));
-          $this->district=htmlspecialchars(strip_tags($this->district));
-          $this->city=htmlspecialchars(strip_tags($this->city));
-          $this->detail=htmlspecialchars(strip_tags($this->detail));
-          $this->specific=htmlspecialchars(strip_tags($this->specific));
-          $this->status=htmlspecialchars(strip_tags($this->status));
-          $this->type_id=htmlspecialchars(strip_tags($this->type_id));
-          $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
-          $this->reg_date=htmlspecialchars(strip_tags($this->reg_date));
-          $this->feedback_id=htmlspecialchars(strip_tags($this->feedback_id));
-
-          // bind values
-          $stmt->bindParam(":id", $this->id);
-          $stmt->bindParam(":pname", $this->pname);
-          $stmt->bindParam(":fname", $this->fname);
-          $stmt->bindParam(":lname", $this->lname);
-          $stmt->bindParam(":gender", $this->gender);
-          $stmt->bindParam(":age", $this->age);
-          $stmt->bindParam(":place", $this->place);
-          $stmt->bindParam(":subdistrict", $this->subdistrict);
-          $stmt->bindParam(":district", $this->district);
-          $stmt->bindParam(":city", $this->city);
-          $stmt->bindParam(":detail", $this->detail);
-          $stmt->bindParam(":specific", $this->specific);
-          $stmt->bindParam(":status", $this->status);
-          $stmt->bindParam(":type_id",$this->type_id);
-          $stmt->bindParam(":guest_id",$this->guest_id);
-          $stmt->bindParam(":reg_date",$this->reg_date);
-          $stmt->bindParam(":feedback_id", $this->feedback_id);
         }
-
-      }
-      ?>
+        ?>

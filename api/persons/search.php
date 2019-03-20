@@ -54,7 +54,9 @@ $missing->special = $data->special;
 //         $row["lowerwaist"]." L".$row["lowercolor"];
 
 $stmt = $missing->search();
-$q =  $missing->city." ".$missing->city." ".
+$q =  $missing->fname." ".
+      $missing->lname." ".
+      $missing->city." ".$missing->city." ".
       $missing->district." ".
       $missing->subdistrict." ".
       $missing->place." ".
