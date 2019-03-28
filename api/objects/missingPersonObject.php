@@ -455,7 +455,7 @@ class MissingPersons{
         $diff = array_diff($cutInput,["กก.","ซม.", "น้ำหนัก", "ประมาณ", "บริเวณ","ลักษณะ"]);
         $this->cut_query = array_count_values($diff);
         // $this->cut_query = array_values($diff);
-        // return $this->cut_query;
+        return $this->cut_query;
       }
 
       function calIR(){

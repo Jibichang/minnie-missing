@@ -49,12 +49,12 @@ class MissingPersonsIR{
     $this->connection = $connection;
   }
 
-  public function searchIR($document, $query){
-    $this->preProcess($document);
+  public function searchIR($doc, $query){
+    $this->preProcess($doc);
     $this->calIDF();
     $this->calQuery($query);
     // $this->calIR();
-    return $this->calIR();
+    return $this->calQuery($query);
   }
 
   function read(){
