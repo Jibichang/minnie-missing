@@ -54,8 +54,8 @@ $missing->special = $data->special;
 //         $row["lowerwaist"]." L".$row["lowercolor"];
 
 $stmt = $missing->search();
-$q =  $data->fname." ".$data->fname." ".$data->fname." ".
-      $data->lname." ".$data->lname." ".$data->lname." ".
+$q =  $data->fname." ".$data->fname." ".
+      $data->lname." ".$data->lname." ".
       $missing->city." ".$missing->city." ".
       $missing->district." ".
       $missing->subdistrict." ".
@@ -68,7 +68,7 @@ $q =  $data->fname." ".$data->fname." ".$data->fname." ".
       $missing->lowercolor." ".
 
       $missing->detail_etc." ".$missing->detail_etc." ".
-      $missing->special." ".$missing->special." ".
+      $missing->special." ".$missing->special." ".$missing->special." ".
       $missing->skintone." ".
       $missing->hairtype." ".
       $missing->haircolor." ".
@@ -76,9 +76,18 @@ $q =  $data->fname." ".$data->fname." ".$data->fname." ".
 
       $query = $q;
       if ($data->mode == 0) {
-        $query = $q." ".$missing->detail_etc." ".$missing->detail_etc." ";
+        $query = $data->fname." ".$data->lname." ".$data->fname." ".$data->lname." ".$q;
       }else if ($data->mode == 1) {
-        $query = $data->fname." ".$data->lname." ".$missing->city." ".$q;
+        $query = $missing->city." ".$q;
+      }else if ($data->mode == 2) {
+        $query = $q." ".
+                $missing->detail_etc." ".
+                $missing->detail_etc." ".
+                $missing->skintone." ".
+                $missing->hairtype." ".
+                $missing->haircolor." ".
+                $missing->special;
+
       }else {
         $query = $q;
       }
