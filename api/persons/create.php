@@ -18,7 +18,7 @@ $missing = new MissingPersons($db);
 $data = json_decode(file_get_contents("php://input"));
 
 
-$missing->plost_id = $data->plost_id;
+// $missing->plost_id = $data->plost_id;
 $missing->pname = $data->pname;
 $missing->fname = $data->fname;
 $missing->lname = $data->lname;
