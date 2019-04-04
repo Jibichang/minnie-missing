@@ -24,8 +24,8 @@ $feedback->id = $data->id;
 
 
 // create the product
-if($feedback->create()){
-
+if(!empty($data->guest_id) && !empty($data->id)){
+    $feedback->create();
     // set response code - 201 created
     http_response_code(201);
 
