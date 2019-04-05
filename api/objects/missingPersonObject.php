@@ -46,6 +46,8 @@ class MissingPersons{
   private $n_db =array();
   private $sim_result_return = array();
 
+  private $feedback_array = array();
+
   public function __construct($connection){
     $this->connection = $connection;
   }
@@ -304,11 +306,27 @@ class MissingPersons{
   }
 
   // search products
-  function search(){
+  function search($guest_id){
+    $queryFeedback = "SELECT DISTINCT feedback.id FROM feedback WHERE feedback.guest_id = '$guest_id'";
+    $stmtFeedback = $this->connection->prepare($queryFeedback);
+    $stmtFeedback->execute();
+
+    $arrayName = array();
+    while ($rowFeedback = $stmtFeedback->fetch(PDO::FETCH_ASSOC))
+    {
+      $arrayName[$rowFeedback["id"]] = $rowFeedback["id"];
+      // array_push($arrayName, $rowFeedback["id"] => 1);
+    }
+    // array_unique($arrayName);
+    $this->feedback_array = $arrayName;
+
     $query = "SELECT * FROM $this->table_name
     WHERE IF(gender = :gender AND status = :status ,
       IF(fname LIKE :fname OR lname LIKE :lname ,1,1) ,0)";
       // prepare query statement
+
+      //SELECT * FROM peoplelost WHERE IF(gender = 'F' AND status = "0" , IF(fname LIKE '' OR lname LIKE '' ,1,1) ,0)
+      //SELECT * FROM peoplelost LEFT JOIN feedback ON peoplelost.plost_id = feedback.id WHERE feedback.guest_id = '1'
       $stmt = $this->connection->prepare($query);
       // sanitize
       $this->fname=htmlspecialchars(strip_tags($this->fname));
@@ -359,8 +377,8 @@ class MissingPersons{
       return $stmt;
     }
 
-    public function searchIR($query){
-      $this->preProcess($this->search());
+    public function searchIR($query, $stmt){
+      $this->preProcess($stmt);
       $this->calIDF();
       $this->calQuery($query);
       // $this->calIR();
@@ -512,44 +530,52 @@ class MissingPersons{
         $missing_arr["body"]=array();
         foreach ($sim as $key => $value) {
           $key_plus = $key;
-          $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
-          $stmt = $this->connection->prepare($query);
-          $stmt-> execute();
+          // array_flip($this->feedback_array);
+          // filter feedback
+          if ($key_plus != $this->feedback_array[$key_plus]) {
+            // array_splice($sim, $this->feedback_array[$key_plus], 1);
+            $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
+            $stmt = $this->connection->prepare($query);
+            $stmt-> execute();
 
-          while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-          {
-            extract($row);
-            $missing_item = array(
-              "id"=> $plost_id,
-              "pname"=> $pname,
-              "fname"=> $fname,
-              "lname"=> $lname,
-              "gender"=> $gender,
-              "age"=> $age,
-              "place"=> $place,
-              "subdistrict"=> $subdistrict,
-              "district"=> $district,
-              "city"=> $city,
-              "height"=> $height,
-              "weight"=> $weight,
-              "shape"=> $shape,
-              "hairtype"=> $hairtype,
-              "haircolor"=> $haircolor,
-              "skintone"=> $skintone,
-              "upperwaist"=> $upperwaist,
-              "uppercolor"=> $uppercolor,
-              "lowerwaist"=> $lowerwaist,
-              "lowercolor"=> $lowercolor,
-              "detail_etc"=> $detail_etc,
-              "special"=> $special,
-              "type_id"=> $type_id,
-              "guest_id"=> $guest_id,
-              "status"=> $status,
-              "reg_date"=> $reg_date
-            );
-            array_push($missing_arr["body"], $missing_item);
-            // array_push($sim_result, $row["detail_etc"]); // detail (doc)
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
+              extract($row);
+              $missing_item = array(
+                "id"=> $plost_id,
+                "pname"=> $pname,
+                "fname"=> $fname,
+                "lname"=> $lname,
+                "gender"=> $gender,
+                "age"=> $age,
+                "place"=> $place,
+                "subdistrict"=> $subdistrict,
+                "district"=> $district,
+                "city"=> $city,
+                "height"=> $height,
+                "weight"=> $weight,
+                "shape"=> $shape,
+                "hairtype"=> $hairtype,
+                "haircolor"=> $haircolor,
+                "skintone"=> $skintone,
+                "upperwaist"=> $upperwaist,
+                "uppercolor"=> $uppercolor,
+                "lowerwaist"=> $lowerwaist,
+                "lowercolor"=> $lowercolor,
+                "detail_etc"=> $detail_etc,
+                "special"=> $special,
+                "type_id"=> $type_id,
+                "guest_id"=> $guest_id,
+                "status"=> $status,
+                "reg_date"=> $reg_date,
+                "ss"=>$this->feedback_array[$key_plus]
+              );
+              array_push($missing_arr["body"], $missing_item);
+              // array_push($sim_result, $row["detail_etc"]); // detail (doc)
+            }
           }
+
+
 
         }
         return $missing_arr;

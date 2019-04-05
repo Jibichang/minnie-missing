@@ -43,7 +43,7 @@ $missing->type_id = $data->type_id;
 $missing->status = $data->status;
 $missing->detail_etc = $data->detail_etc;
 $missing->special = $data->special;
-//$missing->type_id = $data->type_id;
+$missing->guest_id = $data->guest_id;
 //$missing->missing_person = $data->fname.''.$data->lname;
 
 // $str =  $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
@@ -53,45 +53,47 @@ $missing->special = $data->special;
 //         $row["upperwaist"]." U".$row["uppercolor"]." ".
 //         $row["lowerwaist"]." L".$row["lowercolor"];
 
-$stmt = $missing->search();
+
 $q =  $data->fname." ".$data->fname." ".
-      $data->lname." ".$data->lname." ".
-      $missing->city." ".$missing->city." ".
-      $missing->district." ".
-      $missing->subdistrict." ".
-      $missing->place." ".
-      $missing->age." ".
+$data->lname." ".$data->lname." ".
+$missing->city." ".$missing->city." ".
+$missing->district." ".
+$missing->subdistrict." ".
+$missing->place." ".
+$missing->age." ".
 
-      $missing->upperwaist." ".
-      $missing->uppercolor." ".
-      $missing->lowerwaist." ".
-      $missing->lowercolor." ".
+$missing->upperwaist." ".
+$missing->uppercolor." ".
+$missing->lowerwaist." ".
+$missing->lowercolor." ".
 
-      $missing->detail_etc." ".$missing->detail_etc." ".
-      $missing->special." ".$missing->special." ".$missing->special." ".
-      $missing->skintone." ".
-      $missing->hairtype." ".
-      $missing->haircolor." ".
-      $missing->shape." ";
+$missing->detail_etc." ".$missing->detail_etc." ".
+$missing->special." ".$missing->special." ".$missing->special." ".
+$missing->skintone." ".
+$missing->hairtype." ".
+$missing->haircolor." ".
+$missing->shape." ";
 
-      $query = $q;
-      if ($data->mode == 0) {
-        $query = $data->fname." ".$data->lname." ".$data->fname." ".$data->lname." ".$q;
-      }else if ($data->mode == 1) {
-        $query = $missing->city." ".$q;
-      }else if ($data->mode == 2) {
-        $query = $q." ".
-                $missing->detail_etc." ".
-                $missing->detail_etc." ".
-                $missing->skintone." ".
-                $missing->hairtype." ".
-                $missing->haircolor." ".
-                $missing->special;
+$query = $q;
+if ($data->mode == 0) {
+  $query = $data->fname." ".$data->lname." ".$data->fname." ".$data->lname." ".$q;
+}else if ($data->mode == 1) {
+  $query = $missing->city." ".$q;
+}else if ($data->mode == 2) {
+  $query = $q." ".
+  $missing->detail_etc." ".
+  $missing->detail_etc." ".
+  $missing->skintone." ".
+  $missing->hairtype." ".
+  $missing->haircolor." ".
+  $missing->special;
 
-      }else {
-        $query = $q;
-      }
-$result = $missing->searchIR($query);
+}else {
+  $query = $q;
+}
+
+$stmt = $missing->search($data->guest_id);
+$result = $missing->searchIR($query, $stmt);
 $num = $stmt->rowCount();
 
 if ($num >  0) {
@@ -99,51 +101,13 @@ if ($num >  0) {
   http_response_code(200);
   // show products data
   echo json_encode($result);
-
-  // $missing_arr=array();
-  // $missing_arr["body"]=array();
-  // while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-  // {
-  //   extract($row);
-  //   $missing_item = array(
-  //     "pname"=> $pname,
-  //     "fname"=> $fname,
-  //     "lname"=> $lname,
-  //     "gender"=> $gender,
-  //     "age"=> $age,
-  //     "place"=> $place,
-  //     "subdistrict"=> $subdistrict,
-  //     "district"=> $district,
-  //     "city"=> $city,
-  //     "height"=> $height,
-  //     "weight"=> $weight,
-  //     "shape"=> $shape,
-  //     "hairtype"=> $hairtype,
-  //     "haircolor"=> $haircolor,
-  //     "skintone"=> $skintone,
-  //     "upperrwaist"=> $upperwaist,
-  //     "uppercolor"=> $uppercolor,
-  //     "lowerwaist"=> $lowerwaist,
-  //     "lowercolor"=> $lowercolor,
-  //     "detail_etc"=> $detail_etc,
-  //     "special"=> $special,
-  //     "type_id"=> $type_id,
-  //     "guest_id"=> $guest_id,
-  //     "status"=> $status,
-  //     "reg_date"=> $reg_date
-  //   );
-  //   array_push($missing_arr["body"], $missing_item);
-  //   // array_push($sim_result, $row["detail_etc"]); // detail (doc)
-  // }
-  // echo json_encode($missing_arr);
-
 }
 else {
   // set response code - 404 Not found
   http_response_code(404);
   // tell the user no products found
   echo json_encode(
-      array("message" => "No person found.")
+    array("message" => "No person found.")
   );
 }
 
