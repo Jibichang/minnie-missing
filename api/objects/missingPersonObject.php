@@ -395,17 +395,23 @@ class MissingPersons{
       $this->count_doc = 0;
       while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
       {
-        $this->count_doc += 1; // N doc
-        $str =  $row["fname"]." ".$row["lname"]." ".
-                $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
-                $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
-                $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
-                $row["hairtype"]." H".$row["haircolor"]." ".
-                $row["upperwaist"]." U".$row["uppercolor"]." ".
-                $row["lowerwaist"]." L".$row["lowercolor"];
-        array_push($this->n_db, $row["plost_id"]);
-        array_push($this->doc, $str); // detail (doc)
-        $this->word_all = $segment-> get_segment_array($str); //word
+        $temp = $row["plost_id"];
+        if (!isset($this->feedback_array[$temp])) {
+          $this->feedback_array[$temp] = null;
+          if ($this->feedback_array[$temp] != $temp) {
+            $this->count_doc += 1; // N doc
+            $str =  $row["fname"]." ".$row["lname"]." ".
+                    $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
+                    $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
+                    $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
+                    $row["hairtype"]." ".$row["haircolor"]." ".
+                    $row["upperwaist"]." ".$row["uppercolor"]." ".
+                    $row["lowerwaist"]." ".$row["lowercolor"];
+            array_push($this->n_db, $row["plost_id"]);
+            array_push($this->doc, $str); // detail (doc)
+            $this->word_all = $segment-> get_segment_array($str); //word
+          }
+        }
       }
       $this->word_unique = array_keys(array_count_values($this->word_all)); // word unique
       // stop word
@@ -532,7 +538,7 @@ class MissingPersons{
           $key_plus = $key;
           // array_flip($this->feedback_array);
           // filter feedback
-          if ($key_plus != $this->feedback_array[$key_plus]) {
+          // if ($key_plus != $this->feedback_array[$key_plus]) {
             // array_splice($sim, $this->feedback_array[$key_plus], 1);
             $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
             $stmt = $this->connection->prepare($query);
@@ -567,15 +573,13 @@ class MissingPersons{
                 "type_id"=> $type_id,
                 "guest_id"=> $guest_id,
                 "status"=> $status,
-                "reg_date"=> $reg_date,
-                "ss"=>$this->feedback_array[$key_plus]
+                "reg_date"=> $reg_date
+                // "ss"=>$this->feedback_array[$key_plus]
               );
               array_push($missing_arr["body"], $missing_item);
               // array_push($sim_result, $row["detail_etc"]); // detail (doc)
             }
-          }
-
-
+          // }
 
         }
         return $missing_arr;
