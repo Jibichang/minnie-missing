@@ -306,6 +306,18 @@ class MissingPersons{
   }
 
   // search products
+  function guest_id(){
+    $query = "SELECT * FROM $this->table_name WHERE guest_id = :guest_id ORDER BY peoplelost . reg_date ASC";
+    // prepare query statement
+    $stmt = $this->connection->prepare($query);
+    // sanitize
+    $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
+
+    $stmt->bindParam(":guest_id", $this->guest_id);
+    $stmt->execute();
+    return $stmt;
+  }
+
   function search($guest_id){
     $queryFeedback = "SELECT DISTINCT feedback.id FROM feedback WHERE feedback.guest_id = '$guest_id'";
     $stmtFeedback = $this->connection->prepare($queryFeedback);
@@ -401,12 +413,12 @@ class MissingPersons{
           if ($this->feedback_array[$temp] != $temp) {
             $this->count_doc += 1; // N doc
             $str =  $row["fname"]." ".$row["lname"]." ".
-                    $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
-                    $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
-                    $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
-                    $row["hairtype"]." ".$row["haircolor"]." ".
-                    $row["upperwaist"]." ".$row["uppercolor"]." ".
-                    $row["lowerwaist"]." ".$row["lowercolor"];
+            $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
+            $row["city"]." ".$row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
+            $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
+            $row["hairtype"]." ".$row["haircolor"]." ".
+            $row["upperwaist"]." ".$row["uppercolor"]." ".
+            $row["lowerwaist"]." ".$row["lowercolor"];
             array_push($this->n_db, $row["plost_id"]);
             array_push($this->doc, $str); // detail (doc)
             $this->word_all = $segment-> get_segment_array($str); //word
@@ -539,46 +551,46 @@ class MissingPersons{
           // array_flip($this->feedback_array);
           // filter feedback
           // if ($key_plus != $this->feedback_array[$key_plus]) {
-            // array_splice($sim, $this->feedback_array[$key_plus], 1);
-            $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
-            $stmt = $this->connection->prepare($query);
-            $stmt-> execute();
+          // array_splice($sim, $this->feedback_array[$key_plus], 1);
+          $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
+          $stmt = $this->connection->prepare($query);
+          $stmt-> execute();
 
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-            {
-              extract($row);
-              $missing_item = array(
-                "id"=> $plost_id,
-                "pname"=> $pname,
-                "fname"=> $fname,
-                "lname"=> $lname,
-                "gender"=> $gender,
-                "age"=> $age,
-                "place"=> $place,
-                "subdistrict"=> $subdistrict,
-                "district"=> $district,
-                "city"=> $city,
-                "height"=> $height,
-                "weight"=> $weight,
-                "shape"=> $shape,
-                "hairtype"=> $hairtype,
-                "haircolor"=> $haircolor,
-                "skintone"=> $skintone,
-                "upperwaist"=> $upperwaist,
-                "uppercolor"=> $uppercolor,
-                "lowerwaist"=> $lowerwaist,
-                "lowercolor"=> $lowercolor,
-                "detail_etc"=> $detail_etc,
-                "special"=> $special,
-                "type_id"=> $type_id,
-                "guest_id"=> $guest_id,
-                "status"=> $status,
-                "reg_date"=> $reg_date
-                // "ss"=>$this->feedback_array[$key_plus]
-              );
-              array_push($missing_arr["body"], $missing_item);
-              // array_push($sim_result, $row["detail_etc"]); // detail (doc)
-            }
+          while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+          {
+            extract($row);
+            $missing_item = array(
+              "id"=> $plost_id,
+              "pname"=> $pname,
+              "fname"=> $fname,
+              "lname"=> $lname,
+              "gender"=> $gender,
+              "age"=> $age,
+              "place"=> $place,
+              "subdistrict"=> $subdistrict,
+              "district"=> $district,
+              "city"=> $city,
+              "height"=> $height,
+              "weight"=> $weight,
+              "shape"=> $shape,
+              "hairtype"=> $hairtype,
+              "haircolor"=> $haircolor,
+              "skintone"=> $skintone,
+              "upperwaist"=> $upperwaist,
+              "uppercolor"=> $uppercolor,
+              "lowerwaist"=> $lowerwaist,
+              "lowercolor"=> $lowercolor,
+              "detail_etc"=> $detail_etc,
+              "special"=> $special,
+              "type_id"=> $type_id,
+              "guest_id"=> $guest_id,
+              "status"=> $status,
+              "reg_date"=> $reg_date
+              // "ss"=>$this->feedback_array[$key_plus]
+            );
+            array_push($missing_arr["body"], $missing_item);
+            // array_push($sim_result, $row["detail_etc"]); // detail (doc)
+          }
           // }
 
         }
