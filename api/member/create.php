@@ -19,22 +19,29 @@ $member->guest_name = $data->name;
 $member->guest_email = $data->email;
 $member->guest_pass = $data->password;
 
-if($member->create()){
+$email_exists = $member->emailExists();
 
-  // set response code
-  http_response_code(200);
+if(!$email_exists){
+  if ($member->create()) {
+    // set response code
+    http_response_code(200);
 
-  // display message: user was created
-  echo json_encode(array("message" => "User was created."));
+    // display message: user was created
+    echo json_encode(array("message" => "User was created."));
+  }else {
+    // set response code
+    http_response_code(400);
+    // display message: unable to create user
+    echo json_encode(array("message" => "Unable to create user."));
+  }
 }
 
 // message if unable to create user
 else{
-
   // set response code
-  http_response_code(400);
-
+  http_response_code(422);
   // display message: unable to create user
-  echo json_encode(array("message" => "Unable to create user."));
+  echo json_encode(array("message" => "user not unique."));
+
 }
 ?>

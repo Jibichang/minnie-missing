@@ -58,6 +58,7 @@ if($rowCount > 0){
     array_push($missing_arr["body"], $missing_item);
     // array_push($sim_result, $row["detail_etc"]); // detail (doc)
   }
+  http_response_code(200);
   echo json_encode($missing_arr, JSON_UNESCAPED_UNICODE);
   // echo $data->guest_id;
 }else {
