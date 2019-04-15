@@ -400,14 +400,11 @@ class MissingPersons{
     function preProcess($stmt){
       $segment = new Segment();
 
-      // $query = "SELECT * FROM " . $this->table_name;
-      // $stmt2 = $this->connection->prepare($query);
-      // $stmt2-> execute();
-
       $this->count_doc = 0;
       while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
       {
         $temp = $row["plost_id"];
+        // filter before calculate
         if (!isset($this->feedback_array[$temp])) {
           $this->feedback_array[$temp] = null;
           if ($this->feedback_array[$temp] != $temp) {
@@ -594,8 +591,23 @@ class MissingPersons{
           // }
 
         }
+        // default value
         return $missing_arr;
-        // return $sim_result;
+
+        // doc number
+        // return array_keys($sim);
+
+        // sim only
+        // return array_values($sim);
+
+        // sim unsort
+        // return $sim;
+
+        // idf
+        // return $this->idf;
+
+        // tf per doc
+        // return $this->freq_doc;
       }
 
     }

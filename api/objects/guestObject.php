@@ -17,9 +17,11 @@ class Guest {
   }
 
   function create(){
-    $query = "INSERT INTO $this->table_name
-    SET guest_name = :name,
+    $query = "INSERT INTO $this->table_name SET
+    guest_name = :name,
     guest_pass = :password,
+    guest_place = :place,
+    guest_phone = :phone,
     guest_email = :email";
 
     // prepare the query
@@ -29,20 +31,25 @@ class Guest {
     $this->guest_name=htmlspecialchars(strip_tags($this->guest_name));
     $this->guest_email=htmlspecialchars(strip_tags($this->guest_email));
     $this->guest_pass=htmlspecialchars(strip_tags($this->guest_pass));
+    $this->guest_place=htmlspecialchars(strip_tags($this->guest_place));
+    $this->guest_phone=htmlspecialchars(strip_tags($this->guest_phone));
+
 
     // bind the values
     $stmt->bindParam(':name', $this->guest_name);
     $stmt->bindParam(':email', $this->guest_email);
 
+
     // hash the password before saving to database
     $password_hash = password_hash($this->guest_pass, PASSWORD_BCRYPT);
     $stmt->bindParam(':password', $password_hash);
+    $stmt->bindParam(':phone', $this->guest_phone);
+    $stmt->bindParam(':place', $this->guest_place);
 
     // execute the query, also check if query was successful
     if($stmt->execute()){
       return true;
     }
-
     return false;
   }
 

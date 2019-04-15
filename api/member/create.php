@@ -6,28 +6,30 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
-include_once '../objects/memberObject.php';
+include_once '../objects/guestObject.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$member = new Member($db);
+$guest = new Guest($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
-$member->guest_name = $data->name;
-$member->guest_email = $data->email;
-$member->guest_pass = $data->password;
+$guest->guest_name = $data->name;
+$guest->guest_email = $data->email;
+$guest->guest_pass = $data->password;
+$guest->guest_phone = $data->phone;
+$guest->guest_place = $data->place;
 
-$email_exists = $member->emailExists();
+$email_exists = $guest->emailExists();
 
-if(!$email_exists){
-  if ($member->create()) {
+if(!$email_exists && !empty($data->email)){
+  if ($guest->create()) {
     // set response code
     http_response_code(200);
 
     // display message: user was created
-    echo json_encode(array("message" => "User was created."));
+    echo json_encode(array("message" => "User was created." . $guest->guest_phone));
   }else {
     // set response code
     http_response_code(400);
