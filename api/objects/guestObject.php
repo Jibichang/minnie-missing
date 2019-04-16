@@ -62,7 +62,6 @@ class Guest {
   }
 
   function emailExists(){
-
     $query = "SELECT *
     FROM  $this->table_name
     WHERE guest_email = ?
@@ -92,25 +91,28 @@ class Guest {
   }
 
   function update(){
-    $password_set=!empty($this->guest_pass) ? ", guest_pass = :password" : "";
+    $password_set = !empty($this->guest_pass) ? "guest_pass = :password" : "";
 
     $query = "UPDATE $this->table_name
     SET
     guest_name = :name,
-    guest_email = :email
+    guest_place = :place,
+    guest_phone = :phone,
     {$password_set}
     WHERE
-    guest_id = :id";
+    guest_id = :guest_id";
 
     $stmt = $this->connection->prepare($query);
 
     $this->guest_name=htmlspecialchars(strip_tags($this->guest_name));
-    $this->guest_email=htmlspecialchars(strip_tags($this->guest_email));
     $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
+    $this->guest_place=htmlspecialchars(strip_tags($this->guest_place));
+    $this->guest_phone=htmlspecialchars(strip_tags($this->guest_phone));
 
     $stmt->bindParam(':name', $this->guest_name);
-    $stmt->bindParam(':email', $this->guest_email);
-    $stmt->bindParam(':id', $this->guest_id);
+    $stmt->bindParam(':guest_id', $this->guest_id);
+    $stmt->bindParam(':phone', $this->guest_phone);
+    $stmt->bindParam(':place', $this->guest_place);
 
     // hash the password before saving to database
     if(!empty($this->guest_pass)){
@@ -118,10 +120,34 @@ class Guest {
       $password_hash = password_hash($this->guest_pass, PASSWORD_BCRYPT);
       $stmt->bindParam(':password', $password_hash);
     }
-     $stmt->bindParam(':id', $this->guest_id);
+    // $stmt->bindParam(':id', $this->guest_id);
 
     if($stmt->execute()){
       return true;
+    }
+    return false;
+  }
+
+  function validPass($input_pass) {
+    $query = "SELECT guest_pass
+    FROM  $this->table_name
+    WHERE guest_id = ?
+    LIMIT 0,1";
+
+    $stmt = $this->connection->prepare( $query );
+    $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
+    $stmt->bindParam(1, $this->guest_id);
+
+    $stmt->execute();
+    $num = $stmt->rowCount();
+
+    if($num>0){
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      $this->guest_pass = $row['guest_pass'];
+
+      if (password_verify($input_pass, $this->guest_pass)) {
+        return true;
+      }
     }
     return false;
   }
