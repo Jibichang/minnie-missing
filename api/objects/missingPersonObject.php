@@ -87,7 +87,7 @@ class MissingPersons{
     $query = "INSERT INTO
     " . $this->table_name . "
     SET
-    plost_id = :plost_id,
+
     pname = :pname,
     fname = :fname,
     lname = :lname,
@@ -98,7 +98,7 @@ class MissingPersons{
     district = :district,
     city = :city,
     height = :height,
-    weight = :weight,
+
     shape = :shape,
     hairtype = :hairtype,
     haircolor = :haircolor,
@@ -113,12 +113,13 @@ class MissingPersons{
     guest_id = :guest_id,
     status = :status,
     reg_date = :reg_date";
-
+    // plost_id = :plost_id,
+    // weight = :weight,
     // prepare query
     $stmt = $this->connection->prepare($query);
 
     // sanitize
-    $this->plost_id=htmlspecialchars(strip_tags($this->plost_id));
+    // $this->plost_id=htmlspecialchars(strip_tags($this->plost_id));
     $this->pname=htmlspecialchars(strip_tags($this->pname));
     $this->fname=htmlspecialchars(strip_tags($this->fname));
     $this->lname=htmlspecialchars(strip_tags($this->lname));
@@ -129,7 +130,7 @@ class MissingPersons{
     $this->district=htmlspecialchars(strip_tags($this->district));
     $this->city=htmlspecialchars(strip_tags($this->city));
     $this->height=htmlspecialchars(strip_tags($this->height));
-    $this->weight=htmlspecialchars(strip_tags($this->weight));
+    // $this->weight=htmlspecialchars(strip_tags($this->weight));
     $this->shape=htmlspecialchars(strip_tags($this->shape));
     $this->hairtype=htmlspecialchars(strip_tags($this->hairtype));
     $this->haircolor=htmlspecialchars(strip_tags($this->haircolor));
@@ -146,7 +147,7 @@ class MissingPersons{
     $this->reg_date=htmlspecialchars(strip_tags($this->reg_date));
 
     // bind values
-    $stmt->bindParam(":plost_id", $this->plost_id);
+    // $stmt->bindParam(":plost_id", $this->plost_id);
     $stmt->bindParam(":pname", $this->pname);
     $stmt->bindParam(":fname", $this->fname);
     $stmt->bindParam(":lname", $this->lname);
@@ -157,7 +158,7 @@ class MissingPersons{
     $stmt->bindParam(":district", $this->district);
     $stmt->bindParam(":city", $this->city);
     $stmt->bindParam(":height", $this->height);
-    $stmt->bindParam(":weight", $this->weight);
+    // $stmt->bindParam(":weight", $this->weight);
     $stmt->bindParam(":shape", $this->shape);
     $stmt->bindParam(":hairtype", $this->hairtype);
     $stmt->bindParam(":haircolor", $this->haircolor);
