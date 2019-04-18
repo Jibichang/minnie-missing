@@ -54,7 +54,7 @@ class MissingPersonsIR{
     $this->calIDF();
     $this->calQuery($query);
     // $this->calIR();
-    return $this->calQuery($query);
+    return $this->calIR();
   }
 
   function read(){
@@ -246,7 +246,7 @@ class MissingPersonsIR{
 
           // return $sim;
           $missing_arr=array();
-          $missing_arr["records"]=array();
+          $missing_arr["body"]=array();
           foreach ($sim as $key => $value) {
             $key_plus = $key;
             $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";

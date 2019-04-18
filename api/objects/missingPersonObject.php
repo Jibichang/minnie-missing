@@ -334,8 +334,8 @@ class MissingPersons{
     $this->feedback_array = $arrayName;
 
     $query = "SELECT * FROM $this->table_name
-    WHERE IF(gender = :gender AND status = :status ,
-      IF(fname LIKE :fname OR lname LIKE :lname ,1,1) ,0)";
+    WHERE IF(gender = :gender ,
+      IF(fname LIKE :fname OR lname LIKE :lname OR status = :status ,1,1) ,0)";
       // prepare query statement
 
       //SELECT * FROM peoplelost WHERE IF(gender = 'F' AND status = "0" , IF(fname LIKE '' OR lname LIKE '' ,1,1) ,0)

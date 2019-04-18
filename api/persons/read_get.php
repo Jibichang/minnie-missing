@@ -25,5 +25,6 @@
   $search_arr = array(
     "ir" => $ir
   );
-  print_r($search_arr);
+  print_r($ir);
+  // echo json_decode($ir);
 ?>
