@@ -61,6 +61,32 @@ class Guest {
     return $stmt;
   }
 
+  public function contact(){
+    $query = "SELECT guest_email, guest_name, guest_phone
+              FROM $this->table_name WHERE guest_id = :guest_id
+              LIMIT 0,1";
+    $stmt = $this->connection-> prepare($query);
+
+    $this->guest_id=htmlspecialchars(strip_tags($this->guest_id));
+    $stmt->bindParam(':guest_id', $this->guest_id);
+
+
+    $stmt->execute();
+    $num = $stmt->rowCount();
+    if($num>0){
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      // $this->guest_id = $row['guest_id'];
+      $this->guest_name = $row['guest_name'];
+      $this->guest_email = $row['guest_email'];
+      // $this->guest_pass = $row['guest_pass'];
+      // $this->guest_place = $row['guest_place'];
+      $this->guest_phone = $row['guest_phone'];
+      return true;
+    }
+    return false;
+  }
+
   function emailExists(){
     $query = "SELECT *
     FROM  $this->table_name
