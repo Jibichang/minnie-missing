@@ -164,9 +164,9 @@ class MissingPersons{
     $stmt->bindParam(":haircolor", $this->haircolor);
     $stmt->bindParam(":skintone", $this->skintone);
     $stmt->bindParam(":upperwaist", $this->upperwaist);
-    $stmt->bindParam(":uppercolor", $this->upperwaist);
+    $stmt->bindParam(":uppercolor", $this->uppercolor);
     $stmt->bindParam(":lowerwaist", $this->lowerwaist);
-    $stmt->bindParam(":lowercolor", $this->lowerwaist);
+    $stmt->bindParam(":lowercolor", $this->lowercolor);
     $stmt->bindParam(":detail_etc", $this->detail_etc);
     $stmt->bindParam(":special", $this->special);
     $stmt->bindParam(":type_id",$this->type_id);
