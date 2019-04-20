@@ -17,6 +17,10 @@ $missing = new MissingPersons($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
+// $upload_path = "uploads/$data->path.jpg"
+// $missing->image = $data->image;
+// $missing->path = $data->path;
+
 
 // $missing->plost_id = $data->plost_id;
 $missing->pname = $data->pname;
@@ -45,14 +49,17 @@ $missing->guest_id = $data->guest_id;
 $missing->status = $data->status;
 $missing->reg_date = $data->reg_date;
 
+
 // create the product
 if($missing->create()){
-
     // set response code - 201 created
     http_response_code(201);
-
+    $missing->getLastID();
     // tell the user
-    echo json_encode(array("message" => "missing was created."));
+    echo json_encode(
+      array("message" => "missing was created.",
+            "plost_id" => $missing->plost_id)
+    );
 }
 else{
 

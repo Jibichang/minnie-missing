@@ -50,7 +50,8 @@
             "type_id"=> $type_id,
             "guest_id"=> $guest_id,
             "status"=> $status,
-            "reg_date"=> $reg_date
+            "reg_date"=> $reg_date,
+            "path_img"=> $path_img
           );
           array_push($missing["body"], $missing_arr);
       }

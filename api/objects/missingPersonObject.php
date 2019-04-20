@@ -30,6 +30,8 @@ class MissingPersons{
   public $guest_id;
   public $status;
   public $reg_date;
+  public $image;
+  public $path_img;
 
   private $count_doc = 0;
   private $word_all = array();
@@ -54,7 +56,7 @@ class MissingPersons{
 
   function read(){
 
-    $query = "SELECT *  FROM " . $this->table_name ;
+    $query = "SELECT *  FROM $this->table_name ORDER BY plost_id DESC";
     $stmt = $this->connection->prepare($query);
     $stmt->execute();
 
@@ -76,6 +78,24 @@ class MissingPersons{
     $stmt->bindParam(1, $this->plost_id);
 
     // execute query
+    if($stmt->execute()){
+      return true;
+    }
+    return false;
+  }
+
+  function upload(){
+    $query = "UPDATE $this->table_name
+    SET path_img= :path_img
+    WHERE plost_id = :plost_id";
+
+    $stmt = $this->connection->prepare($query);
+    $this->path_img=htmlspecialchars(strip_tags($this->path_img));
+    $this->plost_id=htmlspecialchars(strip_tags($this->plost_id));
+
+    $stmt->bindParam(":path_img", $this->path_img);
+    $stmt->bindParam(":plost_id", $this->plost_id);
+
     if($stmt->execute()){
       return true;
     }
@@ -180,6 +200,22 @@ class MissingPersons{
     }
 
     return false;
+  }
+
+  function getLastID(){
+    $query = "SELECT plost_id FROM $this->table_name
+    ORDER BY peoplelost.plost_id  DESC";
+    $stmt = $this->connection->prepare($query);
+
+    $stmt->execute();
+    $num = $stmt->rowCount();
+
+    if($num>0){
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      $this->plost_id = $row['plost_id'];
+      return $this->plost_id;
+    }
   }
 
   function emailExists(){
