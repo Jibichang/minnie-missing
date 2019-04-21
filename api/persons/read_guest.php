@@ -52,7 +52,8 @@ if($rowCount > 0){
       "type_id"=> $type_id,
       "guest_id"=> $guest_id,
       "status"=> $status,
-      "reg_date"=> $reg_date
+      "reg_date"=> $reg_date,
+      "path_img"=> $path_img
       // "ss"=>$this->feedback_array[$key_plus]
     );
     array_push($missing_arr["body"], $missing_item);

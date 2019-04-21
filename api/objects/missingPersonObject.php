@@ -342,7 +342,7 @@ class MissingPersons{
     return false;
   }
 
-  // search products
+  // guest_id
   function guest_id(){
     $query = "SELECT * FROM $this->table_name WHERE guest_id = :guest_id ORDER BY peoplelost . reg_date ASC";
     // prepare query statement
@@ -353,6 +353,27 @@ class MissingPersons{
     $stmt->bindParam(":guest_id", $this->guest_id);
     $stmt->execute();
     return $stmt;
+  }
+
+  function textDetail($detail_id){
+    $query = "SELECT detail_name FROM details WHERE detail_id = ?";
+    // prepare query statement
+    $stmt = $this->connection->prepare($query);
+    // sanitize
+    $detail_id = htmlspecialchars(strip_tags($detail_id));
+
+    $stmt->bindParam(1, $detail_id);
+    $stmt->execute();
+
+    $num = $stmt->rowCount();
+
+    if($num>0){
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      $detail_name = $row['detail_name'];
+      return $detail_name;
+    }
+    return $detail_id;
   }
 
   function search($guest_id){
@@ -606,20 +627,21 @@ class MissingPersons{
               "city"=> $city,
               "height"=> $height,
               "weight"=> $weight,
-              "shape"=> $shape,
-              "hairtype"=> $hairtype,
+              "shape"=> $this->textDetail($shape),
+              "hairtype"=> $this->textDetail($hairtype),
               "haircolor"=> $haircolor,
               "skintone"=> $skintone,
-              "upperwaist"=> $upperwaist,
+              "upperwaist"=> $this->textDetail($upperwaist),
               "uppercolor"=> $uppercolor,
-              "lowerwaist"=> $lowerwaist,
+              "lowerwaist"=> $this->textDetail($lowerwaist),
               "lowercolor"=> $lowercolor,
               "detail_etc"=> $detail_etc,
               "special"=> $special,
               "type_id"=> $type_id,
               "guest_id"=> $guest_id,
               "status"=> $status,
-              "reg_date"=> $reg_date
+              "reg_date"=> $reg_date,
+              "path_img"=> $path_img
               // "ss"=>$this->feedback_array[$key_plus]
             );
             array_push($missing_arr["body"], $missing_item);
@@ -629,7 +651,7 @@ class MissingPersons{
 
         }
         // default value
-        return $missing_arr;
+        // return $missing_arr;
 
         // doc number
         // return array_keys($sim);
@@ -638,7 +660,7 @@ class MissingPersons{
         // return array_values($sim);
 
         // sim unsort
-        // return $sim;
+        return $sim;
 
         // idf
         // return $this->idf;

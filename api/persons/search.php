@@ -76,17 +76,22 @@ $missing->shape." ";
 
 $query = $q;
 if ($data->mode == 0) {
-  $query = $data->fname." ".$data->lname." ".$data->fname." ".$data->lname." ".$q;
+  $query =  $data->fname." ".$data->lname." ".
+            $data->fname." ".$data->lname." ".
+            $data->fname." ".$data->lname." ".
+            $q;
 }else if ($data->mode == 1) {
-  $query = $missing->city." ".$q;
+  $query =  $missing->city." ".$missing->city." ".
+            $missing->subdistrict." ".$missing->subdistrict." ".
+            $missing->district." ".$missing->district." ".
+            $q;
 }else if ($data->mode == 2) {
-  $query = $q." ".
-  $missing->detail_etc." ".
-  $missing->detail_etc." ".
-  $missing->skintone." ".
-  $missing->hairtype." ".
-  $missing->haircolor." ".
-  $missing->special;
+  $query =  $q." ".
+            $missing->detail_etc." ".$missing->detail_etc." ".$missing->detail_etc." ".
+            $missing->skintone." ".$missing->skintone." ".
+            $missing->hairtype." ".$missing->hairtype." ".
+            $missing->haircolor." ".
+            $missing->special." ".$missing->special;
 
 }else {
   $query = $q;
