@@ -539,7 +539,7 @@ class MissingPersons{
           $row["detail_etc"]." ".$row["special"]." ".$row["age"]." ".
           // place
           $row["district"]." ".$row["subdistrict"]." ".$row["place"]." ".
-          
+
           $row["height"]." ".$row["skintone"]." ".$row["shape"]." ".
           $row["hairtype"]." ".$row["haircolor"]." ".
           $row["upperwaist"]." ".$row["uppercolor"]." ".
@@ -660,7 +660,7 @@ class MissingPersons{
               // weight
               $weight = $this->idf[$key]*$value;
               // sim = frequency query* ( weight / lenght)
-              $sim_value += ($this->cut_query[$key]*0.0909)*($weight/$lengh[$freq_key]);
+              $sim_value += ($this->cut_query[$key]*0.077)*($weight/$lengh[$freq_key]);
             }
           } else {
             $this->cut_query[$key] = 0;

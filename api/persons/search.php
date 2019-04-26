@@ -87,8 +87,6 @@ $missing->shape." ";
   //   }
   // }
 
-
-
 $stmt = $missing->search($data->guest_id);
 $result = $missing->searchIR($query, $stmt);
 $num = $stmt->rowCount();
