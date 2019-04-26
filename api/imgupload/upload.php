@@ -17,11 +17,11 @@ $missing = new MissingPersons($db);
 
 $data = json_decode(file_get_contents("php://input"));
 
-$upload_path = "uploads/pic$data->plost_id.jpg";
+$upload_path = "uploads/pic$data->id.jpg";
 
 // $missing->image = $data->image;
 $missing->path_img = $upload_path;
-$missing->plost_id = $data->plost_id;
+$missing->plost_id = $data->id;
 
 // create the product
 if($missing->upload()){

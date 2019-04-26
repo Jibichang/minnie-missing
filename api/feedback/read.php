@@ -12,32 +12,19 @@ include_once '../objects/feedbackObject.php';
 $database = new Database();
 $connection = $database->getConnection();
 
-$feedback = new feedback($connection);
+$feedback = new Feedback($connection);
 $data = json_decode(file_get_contents("php://input"));
 $feedback->guest_id = $data->guest_id;
 
 $stmt = $feedback->read();
-$count = $stmt->rowCount();
+$count = count($stmt,1);
 
-if($count){
-  $feedback = array();
-  $feedback["body"] = array();
 
-  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-    extract($row);
-
-    $feedback_arr = array(
-      "feedback_id" => $feedback_id,
-      "guest_id" => $guest_id,
-      "id" => $id
-    );
-  array_push($feedback["body"], $feedback_arr);
-  }
-
+if($count > 1){
   // set response code - 200 OK
   http_response_code(200);
 
-  echo json_encode($feedback);
+  echo json_encode($stmt);
 }
 else
 {

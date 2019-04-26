@@ -20,7 +20,7 @@ $missing = new MissingPersons($db);
 $data = json_decode(file_get_contents("php://input"));
 
 // set product id to be deleted
-$missing->plost_id = $data->plost_id;
+$missing->plost_id = $data->id;
 
 // delete the product
 if($missing->delete()){
