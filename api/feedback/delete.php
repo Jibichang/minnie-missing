@@ -14,30 +14,18 @@ $connection = $database->getConnection();
 
 $feedback = new feedback($connection);
 $data = json_decode(file_get_contents("php://input"));
+$feedback->id = $data->id;
 $feedback->guest_id = $data->guest_id;
 
 $stmt = $feedback->read();
 $count = $stmt->rowCount();
 
-if($count){
-  $feedback = array();
-  $feedback["body"] = array();
-
-  while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-    extract($row);
-
-    $feedback_arr = array(
-      "feedback_id" => $feedback_id,
-      "guest_id" => $guest_id,
-      "id" => $id
-    );
-  array_push($feedback["body"], $feedback_arr);
-  }
+if($feedback->delete()){
 
   // set response code - 200 OK
   http_response_code(200);
 
-  echo json_encode($feedback);
+  echo json_encode(array("message" => "Delete success "));
 }
 else
 {

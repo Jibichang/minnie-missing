@@ -54,9 +54,10 @@ $missing->guest_id = $data->guest_id;
 //         $row["lowerwaist"]." L".$row["lowercolor"];
 
 
-$q =  $data->fname." ".$data->fname." ".
-$data->lname." ".$data->lname." ".
-$missing->city." ".$missing->city." ".
+$q =
+// $data->fname." ".
+// $data->lname." ".
+// $missing->city."# #".
 $missing->district." ".
 $missing->subdistrict." ".
 $missing->place." ".
@@ -67,35 +68,26 @@ $missing->uppercolor." ".
 $missing->lowerwaist." ".
 $missing->lowercolor." ".
 
-$missing->detail_etc." ".$missing->detail_etc." ".
-$missing->special." ".$missing->special." ".$missing->special." ".
+$missing->detail_etc." ".
+$missing->special." ".
 $missing->skintone." ".
 $missing->hairtype." ".
 $missing->haircolor." ".
 $missing->shape." ";
 
-$query = $q;
-if ($data->mode == 0) {
-  $query =  $data->fname." ".$data->lname." ".
-            $data->fname." ".$data->lname." ".
-            $data->fname." ".$data->lname." ".
-            $q;
-}else if ($data->mode == 1) {
-  $query =  $missing->city." ".$missing->city." ".
-            $missing->subdistrict." ".$missing->subdistrict." ".
-            $missing->district." ".$missing->district." ".
-            $q;
-}else if ($data->mode == 2) {
-  $query =  $q." ".
-            $missing->detail_etc." ".$missing->detail_etc." ".$missing->detail_etc." ".
-            $missing->skintone." ".$missing->skintone." ".
-            $missing->hairtype." ".$missing->hairtype." ".
-            $missing->haircolor." ".
-            $missing->special." ".$missing->special;
 
-}else {
   $query = $q;
-}
+  // if ($missing->city != "-") {
+  //   $query = $query. " #".$missing->city . "# ";
+  //   if ($missing->district != "-") {
+  //     $query = $query. " #".$missing->district . "# ";
+  //     if ($missing->subdistrict != "-") {
+  //       $query = $query. " #".$missing->subdistrict . "# ";
+  //     }
+  //   }
+  // }
+
+
 
 $stmt = $missing->search($data->guest_id);
 $result = $missing->searchIR($query, $stmt);

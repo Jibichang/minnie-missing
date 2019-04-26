@@ -35,7 +35,7 @@ $missing->subdistrict = $data->subdistrict;
 $missing->district = $data->district;
 $missing->city = $data->city;
 $missing->height = $data->height;
-$missing->weight = $data->weight;
+// $missing->weight = $data->weight;
 $missing->shape = $data->shape;
 $missing->hairtype = $data->hairtype;
 $missing->haircolor = $data->haircolor;
@@ -53,7 +53,7 @@ $missing->reg_date = $data->reg_date;
 
 
 // update the product
-if($missing->update()){
+if($missing->update() ){
 
     // set response code - 200 ok
     http_response_code(200);
