@@ -17,11 +17,10 @@ $data = json_decode(file_get_contents("php://input"));
 $feedback->id = $data->id;
 $feedback->guest_id = $data->guest_id;
 
-$stmt = $feedback->read();
-$count = $stmt->rowCount();
+// $stmt = $feedback->read();
+// $count = $stmt->rowCount();
 
-if($feedback->delete()){
-
+if($feedback->delete() && !empty($data->id)){
   // set response code - 200 OK
   http_response_code(200);
 
@@ -31,7 +30,7 @@ else
 {
   http_response_code(404);
   // tell the user no products found
-  echo json_encode(array("message" => "Unable to read feedback."));
+  echo json_encode(array("message" => "Unable to delete feedback."));
 }
 
 ?>

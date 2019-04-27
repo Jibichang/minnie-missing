@@ -17,10 +17,10 @@ $data = json_decode(file_get_contents("php://input"));
 $feedback->guest_id = $data->guest_id;
 
 $stmt = $feedback->read();
-$count = count($stmt,1);
+$count = count($feedback->id_fb);
 
 
-if($count > 1){
+if($count > 0){
   // set response code - 200 OK
   http_response_code(200);
 

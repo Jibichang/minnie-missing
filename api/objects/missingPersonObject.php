@@ -778,7 +778,7 @@ class MissingPersons{
         $key_plus = $key;
         $num = count($missing_arr["body"]);
 
-        if ($value > 0 && $num < 11) {
+        if ($value >= 0 && $num < 11) {
           $query = "SELECT * FROM $this->table_name WHERE plost_id = '$key_plus'";
           $stmt = $this->connection->prepare($query);
           $stmt-> execute();

@@ -59,6 +59,8 @@ class Feedback{
 
     $missing_arr = array();
     $missing_arr["body"]=array();
+    $missing_arr["count"] = count($this->id_fb);
+
     foreach ($this->id_fb as $key => $value) {
       $query2 = "SELECT * FROM peoplelost WHERE plost_id = '$key'";
       $stmt2 = $this->connection->prepare($query2);
