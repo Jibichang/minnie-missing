@@ -22,10 +22,10 @@ $data = json_decode(file_get_contents("php://input"));
 
 // set ID property of product to be edited
 
-$missing->plost_id = $data->plost_id;
+$missing->plost_id = $data->id;
 
 // set product property values
-$missing->pname = $data->pname;
+// $missing->pname = $data->pname;
 $missing->fname = $data->fname;
 $missing->lname = $data->lname;
 $missing->gender = $data->gender;
@@ -53,18 +53,15 @@ $missing->reg_date = $data->reg_date;
 
 
 // update the product
-if($missing->update() ){
-
+if($missing->update() && !empty($data->id)){
     // set response code - 200 ok
     http_response_code(200);
-
     // tell the user
     echo json_encode(array("message" => "Product was updated."));
 }
 
 // if unable to update the product, tell the user
 else{
-
     // set response code - 503 service unavailable
     http_response_code(503);
 

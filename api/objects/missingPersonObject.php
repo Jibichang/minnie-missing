@@ -159,11 +159,8 @@ class MissingPersons{
 
   function create(){
 
-    $query = "INSERT INTO
-    " . $this->table_name . "
+    $query = "INSERT INTO $this->table_name
     SET
-
-    pname = :pname,
     fname = :fname,
     lname = :lname,
     gender = :gender,
@@ -195,7 +192,7 @@ class MissingPersons{
 
     // sanitize
     // $this->plost_id=htmlspecialchars(strip_tags($this->plost_id));
-    $this->pname=htmlspecialchars(strip_tags($this->pname));
+    // $this->pname=htmlspecialchars(strip_tags($this->pname));
     $this->fname=htmlspecialchars(strip_tags($this->fname));
     $this->lname=htmlspecialchars(strip_tags($this->lname));
     $this->gender=htmlspecialchars(strip_tags($this->gender));
@@ -223,7 +220,7 @@ class MissingPersons{
 
     // bind values
     // $stmt->bindParam(":plost_id", $this->plost_id);
-    $stmt->bindParam(":pname", $this->pname);
+    // $stmt->bindParam(":pname", $this->pname);
     $stmt->bindParam(":fname", $this->fname);
     $stmt->bindParam(":lname", $this->lname);
     $stmt->bindParam(":gender", $this->gender);
@@ -303,7 +300,7 @@ class MissingPersons{
   function update(){
 
     $query = "UPDATE $this->table_name
-    SET pname = :pname,
+    SET
     fname = :fname,
     lname = :lname,
     gender = :gender,
@@ -335,7 +332,7 @@ class MissingPersons{
 
     // sanitize
     $this->plost_id=htmlspecialchars(strip_tags($this->plost_id));
-    $this->pname=htmlspecialchars(strip_tags($this->pname));
+    // $this->pname=htmlspecialchars(strip_tags($this->pname));
     $this->fname=htmlspecialchars(strip_tags($this->fname));
     $this->lname=htmlspecialchars(strip_tags($this->lname));
     $this->gender=htmlspecialchars(strip_tags($this->gender));
@@ -363,7 +360,7 @@ class MissingPersons{
 
     // bind values
     $stmt->bindParam(":plost_id", $this->plost_id);
-    $stmt->bindParam(":pname", $this->pname);
+    // $stmt->bindParam(":pname", $this->pname);
     $stmt->bindParam(":fname", $this->fname);
     $stmt->bindParam(":lname", $this->lname);
     $stmt->bindParam(":gender", $this->gender);
@@ -399,7 +396,11 @@ class MissingPersons{
 
   // guest_id
   function guest_id(){
-    $query = "SELECT * FROM $this->table_name WHERE guest_id = :guest_id ORDER BY peoplelost . reg_date ASC";
+    $query = "SELECT * FROM $this->table_name
+              WHERE IF(guest_id = :guest_id
+                AND status = '0', 1, 0)
+                ORDER BY peoplelost . reg_date ASC";
+    // SELECT * FROM peoplelost WHERE IF(guest_id = '7' AND status = '0', 1, 0) ORDER BY peoplelost . reg_date ASC
     // prepare query statement
     $stmt = $this->connection->prepare($query);
     // sanitize
@@ -407,7 +408,45 @@ class MissingPersons{
 
     $stmt->bindParam(":guest_id", $this->guest_id);
     $stmt->execute();
-    return $stmt;
+    // return $stmt;
+    $missing_arr=array();
+    $missing_arr["body"]=array();
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+    {
+      extract($row);
+      $missing_item = array(
+        "id"=> $plost_id,
+        "pname"=> $pname,
+        "fname"=> $fname,
+        "lname"=> $lname,
+        "gender"=> $gender,
+        "age"=> $age,
+        "place"=> $place,
+        "subdistrict"=> $subdistrict,
+        "district"=> $district,
+        "city"=> $city,
+        "height"=> $height,
+        "weight"=> $weight,
+        "shape"=> $this->textDetail($shape),
+        "hairtype"=> $this->textDetail($hairtype),
+        "haircolor"=> $haircolor,
+        "skintone"=> $skintone,
+        "upperwaist"=> $this->textDetail($upperwaist),
+        "uppercolor"=> $uppercolor,
+        "lowerwaist"=> $this->textDetail($lowerwaist),
+        "lowercolor"=> $lowercolor,
+        "detail_etc"=> $detail_etc,
+        "special"=> $special,
+        "type_id"=> $type_id,
+        "guest_id"=> $guest_id,
+        "status"=> $status,
+        "reg_date"=> $reg_date,
+        "path_img"=> $path_img
+      );
+      array_push($missing_arr["body"], $missing_item);
+      // array_push($sim_result, $row["detail_etc"]); // detail (doc)
+    }
+    return $missing_arr;
   }
 
   function textDetail($detail_id){

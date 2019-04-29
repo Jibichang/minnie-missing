@@ -18,51 +18,15 @@ $data = json_decode(file_get_contents("php://input"));
 $missing->guest_id = $data->guest_id;
 
 $stmt = $missing->guest_id();
-$rowCount = $stmt->rowCount();
+// $rowCount = $stmt->rowCount();
 
-if($rowCount > 0){
-  $missing_arr=array();
-  $missing_arr["body"]=array();
-  while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-  {
-    extract($row);
-    $missing_item = array(
-      "id"=> $plost_id,
-      "pname"=> $pname,
-      "fname"=> $fname,
-      "lname"=> $lname,
-      "gender"=> $gender,
-      "age"=> $age,
-      "place"=> $place,
-      "subdistrict"=> $subdistrict,
-      "district"=> $district,
-      "city"=> $city,
-      "height"=> $height,
-      "weight"=> $weight,
-      "shape"=> $shape,
-      "hairtype"=> $hairtype,
-      "haircolor"=> $haircolor,
-      "skintone"=> $skintone,
-      "upperwaist"=> $upperwaist,
-      "uppercolor"=> $uppercolor,
-      "lowerwaist"=> $lowerwaist,
-      "lowercolor"=> $lowercolor,
-      "detail_etc"=> $detail_etc,
-      "special"=> $special,
-      "type_id"=> $type_id,
-      "guest_id"=> $guest_id,
-      "status"=> $status,
-      "reg_date"=> $reg_date,
-      "path_img"=> $path_img
-      // "ss"=>$this->feedback_array[$key_plus]
-    );
-    array_push($missing_arr["body"], $missing_item);
-    // array_push($sim_result, $row["detail_etc"]); // detail (doc)
-  }
+if (!empty($stmt)) {
+  // set response code - 200 OK
   http_response_code(200);
-  echo json_encode($missing_arr, JSON_UNESCAPED_UNICODE);
-  // echo $data->guest_id;
-}else {
+  // show products data
+  echo json_encode($stmt);
+}
+else {
   // set response code - 404 Not found
   http_response_code(404);
   // tell the user no products found
@@ -70,6 +34,57 @@ if($rowCount > 0){
     array("message" => "No person found.")
   );
 }
+
+// if($rowCount > 0){
+//   $missing_arr=array();
+//   $missing_arr["body"]=array();
+//   while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+//   {
+//     extract($row);
+//     $missing_item = array(
+//       "id"=> $plost_id,
+//       "pname"=> $pname,
+//       "fname"=> $fname,
+//       "lname"=> $lname,
+//       "gender"=> $gender,
+//       "age"=> $age,
+//       "place"=> $place,
+//       "subdistrict"=> $subdistrict,
+//       "district"=> $district,
+//       "city"=> $city,
+//       "height"=> $height,
+//       "weight"=> $weight,
+//       "shape"=> $shape,
+//       "hairtype"=> $hairtype,
+//       "haircolor"=> $haircolor,
+//       "skintone"=> $skintone,
+//       "upperwaist"=> $upperwaist,
+//       "uppercolor"=> $uppercolor,
+//       "lowerwaist"=> $lowerwaist,
+//       "lowercolor"=> $lowercolor,
+//       "detail_etc"=> $detail_etc,
+//       "special"=> $special,
+//       "type_id"=> $type_id,
+//       "guest_id"=> $guest_id,
+//       "status"=> $status,
+//       "reg_date"=> $reg_date,
+//       "path_img"=> $path_img
+//       // "ss"=>$this->feedback_array[$key_plus]
+//     );
+//     array_push($missing_arr["body"], $missing_item);
+//     // array_push($sim_result, $row["detail_etc"]); // detail (doc)
+//   }
+//   http_response_code(200);
+//   echo json_encode($missing_arr, JSON_UNESCAPED_UNICODE);
+//   // echo $data->guest_id;
+// }else {
+//   // set response code - 404 Not found
+//   http_response_code(404);
+//   // tell the user no products found
+//   echo json_encode(
+//     array("message" => "No person found.")
+//   );
+// }
 
 
 ?>
