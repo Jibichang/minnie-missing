@@ -82,13 +82,13 @@ class Feedback{
           "city"=> $city,
           "height"=> $height,
           "weight"=> $weight,
-          "shape"=> $shape,
-          "hairtype"=> $hairtype,
+          "shape"=> $this->textDetail($shape),
+          "hairtype"=> $this->textDetail($hairtype),
           "haircolor"=> $haircolor,
           "skintone"=> $skintone,
-          "upperwaist"=> $upperwaist,
+          "upperwaist"=> $this->textDetail($upperwaist),
           "uppercolor"=> $uppercolor,
-          "lowerwaist"=> $lowerwaist,
+          "lowerwaist"=> $this->textDetail($lowerwaist),
           "lowercolor"=> $lowercolor,
           "detail_etc"=> $detail_etc,
           "special"=> $special,
@@ -165,6 +165,27 @@ class Feedback{
     }
 
     return false;
+  }
+
+  function textDetail($detail_id){
+    $query = "SELECT detail_name FROM details WHERE detail_id = ?";
+    // prepare query statement
+    $stmt = $this->connection->prepare($query);
+    // sanitize
+    $detail_id = htmlspecialchars(strip_tags($detail_id));
+
+    $stmt->bindParam(1, $detail_id);
+    $stmt->execute();
+
+    $num = $stmt->rowCount();
+
+    if($num>0){
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      $detail_name = $row['detail_name'];
+      return $detail_name;
+    }
+    return $detail_id;
   }
 
 }
