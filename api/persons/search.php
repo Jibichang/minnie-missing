@@ -54,11 +54,7 @@ $missing->guest_id = $data->guest_id;
 //         $row["lowerwaist"]." L".$row["lowercolor"];
 
 
-$q =
-// $data->fname." ".
-// $data->lname." ".
-// $missing->city."# #".
-$missing->district." ".
+$q = $missing->district." ".
 $missing->subdistrict." ".
 $missing->place." ".
 $missing->age." ".
@@ -75,6 +71,9 @@ $missing->hairtype." ".
 $missing->haircolor." ".
 $missing->shape." ";
 
+// $data->fname." ".
+// $data->lname." ".
+// $missing->city."# #".
 
   $query = $q;
   // if ($missing->city != "-") {
